@@ -1,203 +1,282 @@
- Состояние игры
+// Состояние игры
 const gameState = {
-    hunger 100,
-    happiness 100,
-    energy 100,
-    coins 50,
-    dogState 'idle',
-    lastFedTime Date.now(),
-    lastPlayTime 0,
-    isSleeping false
+    hunger: 100,
+    happiness: 100,
+    energy: 100,
+    coins: 50,
+    dogState: 'happy',
+    isSleeping: false,
+    lastActionTime: Date.now()
 };
 
- Элементы интерфейса
+// DOM элементы
 const elements = {
-    dogImage document.getElementById('dog-image'),
-    hungerBar document.getElementById('hunger-bar'),
-    happinessBar document.getElementById('happiness-bar'),
-    energyBar document.getElementById('energy-bar'),
-    hungerText document.getElementById('hunger-text'),
-    happinessText document.getElementById('happiness-text'),
-    energyText document.getElementById('energy-text'),
-    coinsDisplay document.getElementById('coins'),
-    feedButton document.getElementById('feed-btn'),
-    playButton document.getElementById('play-btn'),
-    sleepButton document.getElementById('sleep-btn'),
-    shopButton document.getElementById('shop-btn')
+    dogImage: document.getElementById('dog-image'),
+    hungerBar: document.getElementById('hunger-bar'),
+    happinessBar: document.getElementById('happiness-bar'),
+    energyBar: document.getElementById('energy-bar'),
+    coinsDisplay: document.getElementById('coins'),
+    speechBubble: document.getElementById('speech'),
+    feedBtn: document.getElementById('feed-btn'),
+    playBtn: document.getElementById('play-btn'),
+    sleepBtn: document.getElementById('sleep-btn'),
+    shopBtn: document.getElementById('shop-btn'),
+    heartsEffect: document.getElementById('hearts-effect'),
+    coinsEffect: document.getElementById('coins-effect')
 };
 
- Изображения состояний собаки
+// Изображения состояний
 const dogImages = {
-    idle 'imagesdog_idle.png',
-    happy 'imagesdog_happy.png',
-    hungry 'imagesdog_hungry.png',
-    eating 'imagesdog_eating.gif',
-    playing 'imagesdog_playing.gif',
-    sleeping 'imagesdog_sleeping.gif',
-    sad 'imagesdog_sad.png'
+    happy: 'images/dog_happy.png',
+    hungry: 'images/dog_hungry.png',
+    eating: 'images/dog_playing.gif',
+    playing: 'images/dog_playing.gif',
+    sleeping: 'images/dog_sleeping.gif',
+    sad: 'images/dog_sad.png',
+    gone: 'images/dog_gone.gif'
 };
 
- Инициализация Telegram WebApp
+// Фразы собаки
+const dogPhrases = [
+    "Гав-гав!",
+    "Хочу кушать!",
+    "Поиграем?",
+    "Я тебя люблю!",
+    "Почеши пузико!",
+    "Гулять!",
+    "Мячик принеси!"
+];
+
+// Инициализация Telegram WebApp
 function initTelegramApp() {
     Telegram.WebApp.ready();
     Telegram.WebApp.expand();
     Telegram.WebApp.enableClosingConfirmation();
+    
+    // Показываем приветственное сообщение
+    showSpeechBubble("Привет, хозяин!");
 }
 
- Обновление интерфейса
+// Показать облачко с текстом
+function showSpeechBubble(text) {
+    elements.speechBubble.textContent = text;
+    elements.speechBubble.style.opacity = '1';
+    elements.speechBubble.style.top = '-40px';
+    
+    setTimeout(() => {
+        elements.speechBubble.style.opacity = '0';
+    }, 2000);
+}
+
+// Обновление интерфейса
 function updateUI() {
-     Обновляем полоски статуса
+    // Обновляем полоски статусов
     elements.hungerBar.style.width = `${gameState.hunger}%`;
     elements.happinessBar.style.width = `${gameState.happiness}%`;
     elements.energyBar.style.width = `${gameState.energy}%`;
     
-     Обновляем текстовые значения
-    elements.hungerText.textContent = `${gameState.hunger}%`;
-    elements.happinessText.textContent = `${gameState.happiness}%`;
-    elements.energyText.textContent = `${gameState.energy}%`;
+    // Обновляем монеты
     elements.coinsDisplay.textContent = gameState.coins;
     
-     Меняем цвета при низких значениях
-    elements.hungerBar.style.backgroundColor = gameState.hunger  30  '#ff4d4d'  '#4CAF50';
-    elements.happinessBar.style.backgroundColor = gameState.happiness  30  '#ff4d4d'  '#2196F3';
-    elements.energyBar.style.backgroundColor = gameState.energy  30  '#ff4d4d'  '#FFC107';
+    // Меняем цвет при низких значениях
+    elements.hungerBar.style.background = gameState.hunger < 30 
+        ? 'linear-gradient(90deg, #FF0000, #FF4500)' 
+        : 'linear-gradient(90deg, #FF6B6B, #FF8E53)';
+        
+    elements.happinessBar.style.background = gameState.happiness < 30 
+        ? 'linear-gradient(90deg, #00BFFF, #1E90FF)' 
+        : 'linear-gradient(90deg, #4ECDC4, #66B3FF)';
+        
+    elements.energyBar.style.background = gameState.energy < 30 
+        ? 'linear-gradient(90deg, #FFA500, #FF8C00)' 
+        : 'linear-gradient(90deg, #FFD166, #FFB347)';
 }
 
- Изменение состояния собаки
+// Изменение состояния собаки
 function changeDogState(newState) {
     gameState.dogState = newState;
     elements.dogImage.src = dogImages[newState];
+    
+    // Случайная фраза при изменении состояния
+    if (Math.random() > 0.7 && newState !== 'sleeping') {
+        const randomPhrase = dogPhrases[Math.floor(Math.random() * dogPhrases.length)];
+        showSpeechBubble(randomPhrase);
+    }
 }
 
- Кормление собаки
+// Эффект сердечек
+function createHearts() {
+    for (let i = 0; i < 10; i++) {
+        setTimeout(() => {
+            const heart = document.createElement('div');
+            heart.innerHTML = '❤️';
+            heart.style.position = 'absolute';
+            heart.style.left = `${50 + Math.random() * 50}%`;
+            heart.style.bottom = '0';
+            heart.style.fontSize = `${20 + Math.random() * 15}px`;
+            heart.style.animation = `float ${2 + Math.random() * 3}s linear forwards`;
+            elements.heartsEffect.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 3000);
+        }, i * 200);
+    }
+}
+
+// Эффект монеток
+function createCoins(amount) {
+    for (let i = 0; i < amount; i++) {
+        setTimeout(() => {
+            const coin = document.createElement('div');
+            coin.innerHTML = '💰';
+            coin.style.position = 'absolute';
+            coin.style.left = `${Math.random() * 100}%`;
+            coin.style.top = `${Math.random() * 100}%`;
+            coin.style.fontSize = '20px';
+            coin.style.animation = `bounce 0.5s ease ${i * 0.1}s 2 alternate`;
+            elements.coinsEffect.appendChild(coin);
+            
+            setTimeout(() => {
+                coin.remove();
+            }, 1000);
+        }, i * 100);
+    }
+}
+
+// Кормление собаки
 function feedDog() {
-    if (gameState.hunger = 100) {
-        showAlert('Собака уже сыта!');
+    if (gameState.hunger >= 100) {
+        showSpeechBubble("Я не голодный!");
         return;
     }
     
-    if (gameState.coins  10) {
-        showPaymentDialog(10, 'Покупка еды');
+    if (gameState.coins < 10) {
+        showPaymentDialog(10, "Покупка корма");
         return;
     }
     
     gameState.coins -= 10;
+    gameState.lastActionTime = Date.now();
     changeDogState('eating');
     disableButtons();
     
-    setTimeout(() = {
+    setTimeout(() => {
         gameState.hunger = Math.min(100, gameState.hunger + 30);
         gameState.happiness = Math.min(100, gameState.happiness + 10);
-        gameState.lastFedTime = Date.now();
         changeDogState('happy');
+        createHearts();
         updateUI();
         enableButtons();
     }, 2000);
 }
 
- Игра с собакой
+// Игра с собакой
 function playWithDog() {
-    if (gameState.energy  20) {
-        showAlert('Собака слишком устала!');
+    if (gameState.energy < 20) {
+        showSpeechBubble("Я устал...");
         return;
     }
     
+    gameState.lastActionTime = Date.now();
     changeDogState('playing');
     disableButtons();
     
-    setTimeout(() = {
+    setTimeout(() => {
         gameState.happiness = Math.min(100, gameState.happiness + 30);
         gameState.energy = Math.max(0, gameState.energy - 20);
-        gameState.lastPlayTime = Date.now();
+        gameState.hunger = Math.max(0, gameState.hunger - 10);
         changeDogState('happy');
+        createHearts();
         updateUI();
         enableButtons();
     }, 3000);
 }
 
- Сон собаки
+// Сон собаки
 function putDogToSleep() {
     if (gameState.isSleeping) return;
     
     gameState.isSleeping = true;
+    gameState.lastActionTime = Date.now();
     changeDogState('sleeping');
     disableButtons();
     
-    setTimeout(() = {
+    setTimeout(() => {
         gameState.energy = 100;
-        gameState.hunger = Math.max(0, gameState.hunger - 10);
+        gameState.hunger = Math.max(0, gameState.hunger - 15);
         gameState.isSleeping = false;
-        changeDogState('idle');
+        changeDogState('happy');
+        showSpeechBubble("Я выспался!");
         updateUI();
         enableButtons();
     }, 5000);
 }
 
- Магазин
+// Магазин
 function openShop() {
     Telegram.WebApp.showPopup({
-        title '🐶 Магазин для пёсика',
-        message 'Выберите товар',
-        buttons [
-            {id 'food', type 'default', text '🍖 Еда (10₽)'},
-            {id 'toy', type 'default', text '🎾 Игрушка (20₽)'},
-            {id 'premium', type 'default', text '🌟 Премиум (100₽)'},
-            {id 'cancel', type 'cancel', text '❌ Отмена'}
+        title: "🐶 Магазин для пёсика",
+        message: "Что вы хотите купить?",
+        buttons: [
+            {id: 'food', type: 'default', text: "🍖 Корм (10₽)"},
+            {id: 'toy', type: 'default', text: "🎾 Игрушка (20₽)"},
+            {id: 'premium', type: 'default', text: "🌟 Премиум (100₽)"},
+            {id: 'cancel', type: 'cancel', text: "❌ Закрыть"}
         ]
-    }, (buttonId) = {
+    }, (buttonId) => {
         if (buttonId === 'food') {
-            showPaymentDialog(10, 'Покупка еды');
+            showPaymentDialog(10, "Покупка корма");
         } else if (buttonId === 'toy') {
-            showPaymentDialog(20, 'Покупка игрушки');
+            showPaymentDialog(20, "Покупка игрушки");
         } else if (buttonId === 'premium') {
-            showPaymentDialog(100, 'Премиум пакет');
+            showPaymentDialog(100, "Премиум пакет");
         }
     });
 }
 
- Платежи
+// Платежи
 function showPaymentDialog(amount, description) {
     Telegram.WebApp.openInvoice({
-        currency 'RUB',
-        amount amount  100,
-        description description
-    }, (status) = {
+        currency: 'RUB',
+        amount: amount * 100,
+        description: description
+    }, (status) => {
         if (status === 'paid') {
-            gameState.coins += amount  2;
-            showAlert(`✅ Спасибо! Вы получили ${amount  2} монет.`);
+            gameState.coins += amount * 2;
+            createCoins(amount);
+            showSpeechBubble("Спасибо за покупку!");
             updateUI();
         }
     });
 }
 
- Вспомогательные функции
-function showAlert(message) {
-    Telegram.WebApp.showAlert(message);
-}
-
+// Отключение кнопок
 function disableButtons() {
-    elements.feedButton.disabled = true;
-    elements.playButton.disabled = true;
-    elements.sleepButton.disabled = true;
-    elements.shopButton.disabled = true;
+    elements.feedBtn.disabled = true;
+    elements.playBtn.disabled = true;
+    elements.sleepBtn.disabled = true;
+    elements.shopBtn.disabled = true;
 }
 
+// Включение кнопок
 function enableButtons() {
-    elements.feedButton.disabled = false;
-    elements.playButton.disabled = false;
-    elements.sleepButton.disabled = false;
-    elements.shopButton.disabled = false;
+    elements.feedBtn.disabled = false;
+    elements.playBtn.disabled = false;
+    elements.sleepBtn.disabled = false;
+    elements.shopBtn.disabled = false;
 }
 
- Игровой цикл
+// Игровой цикл
 function gameLoop() {
     const now = Date.now();
-    const hoursSinceFed = (now - gameState.lastFedTime)  (1000  60  60);
+    const hoursSinceAction = (now - gameState.lastActionTime) / (1000 * 60 * 60);
     
-    if (hoursSinceFed  4) {
+    // Уменьшение показателей со временем
+    if (hoursSinceAction > 4) {
         gameState.hunger = Math.max(0, gameState.hunger - 5);
         gameState.happiness = Math.max(0, gameState.happiness - 3);
-    } else if (hoursSinceFed  2) {
+    } else if (hoursSinceAction > 2) {
         gameState.hunger = Math.max(0, gameState.hunger - 2);
     }
     
@@ -205,38 +284,51 @@ function gameLoop() {
         gameState.energy = Math.max(0, gameState.energy - 1);
     }
     
-     Автоматическое изменение состояния
-    if (gameState.hunger  30  gameState.happiness  30  gameState.energy  30) {
+    // Автоматическое изменение состояния
+    if (gameState.hunger < 30 || gameState.happiness < 30 || gameState.energy < 30) {
         changeDogState('sad');
-    } else if (gameState.dogState === 'sad'  gameState.dogState === 'idle') {
-        changeDogState('idle');
+    } else if (gameState.dogState === 'sad' || gameState.dogState === 'happy') {
+        changeDogState('happy');
     }
     
     updateUI();
     
-     Уведомления
-    if (gameState.hunger  20  gameState.happiness  20) {
-        showAlert('⚠️ Ваш пёсик несчастен! Покормите или поиграйте с ним.');
+    // Уведомления
+    if (gameState.hunger < 20 || gameState.happiness < 20) {
+        showSpeechBubble("Мне плохо...");
     }
 }
 
- Инициализация игры
+// Клик по собаке
+elements.dogImage.addEventListener('click', () => {
+    if (gameState.dogState === 'happy') {
+        elements.dogImage.style.transform = 'scale(1.1)';
+        setTimeout(() => {
+            elements.dogImage.style.transform = 'scale(1)';
+        }, 300);
+        
+        const randomPhrase = dogPhrases[Math.floor(Math.random() * dogPhrases.length)];
+        showSpeechBubble(randomPhrase);
+    }
+});
+
+// Инициализация игры
 function initGame() {
     initTelegramApp();
     
-     Назначение обработчиков событий
-    elements.feedButton.addEventListener('click', feedDog);
-    elements.playButton.addEventListener('click', playWithDog);
-    elements.sleepButton.addEventListener('click', putDogToSleep);
-    elements.shopButton.addEventListener('click', openShop);
+    // Назначение обработчиков
+    elements.feedBtn.addEventListener('click', feedDog);
+    elements.playBtn.addEventListener('click', playWithDog);
+    elements.sleepBtn.addEventListener('click', putDogToSleep);
+    elements.shopBtn.addEventListener('click', openShop);
     
-     Запуск игрового цикла
-    setInterval(gameLoop, 60000);  Обновление каждую минуту
+    // Запуск игрового цикла
+    setInterval(gameLoop, 60000); // Обновление каждую минуту
     
-     Первоначальная отрисовка
+    // Первоначальная настройка
     updateUI();
-    changeDogState('idle');
+    changeDogState('happy');
 }
 
- Запускаем игру при загрузке страницы
+// Запуск игры
 document.addEventListener('DOMContentLoaded', initGame);
