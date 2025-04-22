@@ -1,83 +1,92 @@
-// Конфигурация игры
-const config = {
-  prices: {
-    food: 10,
-    toy: 20,
-    premium: 100
-  },
-  states: {
-    HAPPY: 'happy',
-    HUNGRY: 'hungry',
-    EATING: 'eating',
-    PLAYING: 'playing',
-    SLEEPING: 'sleeping',
-    SAD: 'sad',
-    GONE: 'gone'
-  }
+// Состояние игры
+const gameState = {
+    hunger: 80,
+    happiness: 70,
+    energy: 90,
+    coins: 150,
+    currentScreen: 'pet',
+    petState: 'happy'
 };
 
-// Состояние игры
-const state = {
-  stats: {
-    hunger: 100,
-    happiness: 100,
-    energy: 100
-  },
-  coins: 50,
-  currentState: config.states.HAPPY,
-  isSleeping: false,
-  lastAction: Date.now()
+// DOM элементы
+const elements = {
+    petImage: document.getElementById('pet-image'),
+    hungerBar: document.getElementById('hunger-bar'),
+    happinessBar: document.getElementById('happiness-bar'),
+    energyBar: document.getElementById('energy-bar'),
+    coinsDisplay: document.getElementById('coins'),
+    speechBubble: document.getElementById('speech'),
+    notification: document.getElementById('notification'),
+    screens: document.querySelectorAll('[data-tab]'),
+    tabButtons: document.querySelectorAll('.tab-btn')
 };
 
 // Инициализация Telegram WebApp
-const initTelegramApp = () => {
-  Telegram.WebApp.ready();
-  Telegram.WebApp.expand();
-  Telegram.WebApp.enableClosingConfirmation();
-};
+function initTelegramApp() {
+    Telegram.WebApp.ready();
+    Telegram.WebApp.expand();
+    Telegram.WebApp.enableClosingConfirmation();
+}
 
-// Анимация сердечек
-const createHearts = () => {
-  const container = document.createElement('div');
-  container.className = 'hearts-container';
-  
-  for (let i = 0; i < 8; i++) {
+// Переключение экранов
+function switchScreen(screenId) {
+    // Скрыть все экраны
+    elements.screens.forEach(screen => {
+        screen.classList.remove('active');
+    });
+    
+    // Показать выбранный экран
+    document.querySelector(`[data-tab="${screenId}"]`).classList.add('active');
+    
+    // Обновить активную кнопку
+    elements.tabButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === screenId);
+    });
+    
+    gameState.currentScreen = screenId;
+}
+
+// Обновление интерфейса
+function updateUI() {
+    elements.hungerBar.style.width = `${gameState.hunger}%`;
+    elements.happinessBar.style.width = `${gameState.happiness}%`;
+    elements.energyBar.style.width = `${gameState.energy}%`;
+    elements.coinsDisplay.textContent = gameState.coins;
+}
+
+// Показать уведомление
+function showNotification(text) {
+    elements.notification.textContent = text;
+    elements.notification.style.opacity = '1';
+    
     setTimeout(() => {
-      const heart = document.createElement('div');
-      heart.className = 'heart';
-      heart.style.setProperty('--x', Math.random() * 100);
-      heart.style.setProperty('--delay', i * 0.2);
-      container.appendChild(heart);
-      
-      setTimeout(() => heart.remove(), 3000);
-    }, i * 200);
-  }
-  
-  document.body.appendChild(container);
-};
-
-// Обновление UI
-const updateUI = () => {
-  // Обновляем статус-бары
-  document.getElementById('hunger-bar').style.width = `${state.stats.hunger}%`;
-  document.getElementById('happiness-bar').style.width = `${state.stats.happiness}%`;
-  document.getElementById('energy-bar').style.width = `${state.stats.energy}%`;
-  
-  // Обновляем монеты
-  document.getElementById('coins').textContent = state.coins;
-};
+        elements.notification.style.opacity = '0';
+    }, 2000);
+}
 
 // Инициализация игры
-document.addEventListener('DOMContentLoaded', () => {
-  initTelegramApp();
-  updateUI();
-  
-  // Обработчики событий
-  document.getElementById('feed-btn').addEventListener('click', feed);
-  document.getElementById('play-btn').addEventListener('click', play);
-  document.getElementById('sleep-btn').addEventListener('click', sleep);
-  document.getElementById('shop-btn').addEventListener('click', openShop);
-  
-  // Игровой цикл
-  setInterval(gameLoop, 60000);
-});
+function initGame() {
+    initTelegramApp();
+    updateUI();
+    
+    // Обработчики для нижней панели
+    elements.tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            switchScreen(btn.dataset.tab);
+        });
+    });
+    
+    // Клик по питомцу
+    elements.petImage.addEventListener('click', () => {
+        if (gameState.petState === 'happy') {
+            elements.speechBubble.textContent = getRandomPhrase();
+            animateSpeechBubble();
+        }
+    });
+    
+    // Игровой цикл
+    setInterval(gameLoop, 60000);
+}
+
+// Запуск игры
+document.addEventListener('DOMContentLoaded', initGame);
