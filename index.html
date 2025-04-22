@@ -3,92 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐶 Пёсик — Виртуальный питомец</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap">
+    <title>🐶 Happy Dog — Виртуальный питомец</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
     <div class="app">
-        <!-- Шапка -->
-        <header class="header">
+        <!-- Верхняя панель -->
+        <header class="app-header">
+            <div class="user-info">
+                <div class="level-badge">
+                    <span id="level">1</span>
+                </div>
+                <div class="xp-bar">
+                    <div id="xp-progress"></div>
+                </div>
+            </div>
             <div class="coins">
                 <img src="images/coin.png" alt="Монеты">
-                <span id="coins">150</span>
+                <span id="coins">250</span>
             </div>
-            <h1>Мой Пёсик</h1>
-            <button class="settings-btn">⚙️</button>
         </header>
 
-        <!-- Основной экран -->
-        <main class="main-content" id="screen">
-            <!-- Здесь будет меняться контент -->
-            <div class="pet-screen active" data-tab="pet">
-                <div class="pet-container">
-                    <img src="images/dog_happy.png" alt="Пёсик" id="pet-image">
-                    <div class="speech-bubble" id="speech">Привет!</div>
+        <!-- Основной контент -->
+        <main class="app-content" id="app-content">
+            <!-- Экран питомца -->
+            <section class="screen pet-screen active" data-tab="pet">
+                <div class="pet-container animate__animated" id="pet-container">
+                    <div class="speech-bubble" id="speech-bubble"></div>
+                    <img src="images/dog_happy.png" alt="Пёсик" id="pet-image" class="pet-image">
+                    <div class="mood-indicator" id="mood-indicator"></div>
                 </div>
+                
                 <div class="pet-stats">
-                    <div class="stat-bar">
-                        <span>🍗</span>
-                        <div class="bar"><div id="hunger-bar"></div></div>
+                    <div class="stat-item">
+                        <div class="stat-icon">🍗</div>
+                        <div class="stat-bar">
+                            <div id="hunger-bar" class="stat-fill"></div>
+                        </div>
                     </div>
-                    <div class="stat-bar">
-                        <span>🎾</span>
-                        <div class="bar"><div id="happiness-bar"></div></div>
+                    <div class="stat-item">
+                        <div class="stat-icon">🎾</div>
+                        <div class="stat-bar">
+                            <div id="happiness-bar" class="stat-fill"></div>
+                        </div>
                     </div>
-                    <div class="stat-bar">
-                        <span>💤</span>
-                        <div class="bar"><div id="energy-bar"></div></div>
+                    <div class="stat-item">
+                        <div class="stat-icon">💤</div>
+                        <div class="stat-bar">
+                            <div id="energy-bar" class="stat-fill"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-
+                
+                <div class="quick-actions">
+                    <button class="action-btn feed-btn" id="feed-btn">
+                        <img src="images/food-icon.png" alt="Покормить">
+                        <span>Покормить</span>
+                    </button>
+                    <button class="action-btn play-btn" id="play-btn">
+                        <img src="images/game-icon.png" alt="Играть">
+                        <span>Играть</span>
+                    </button>
+                    <button class="action-btn sleep-btn" id="sleep-btn">
+                        <img src="images/sleep-icon.png" alt="Спать">
+                        <span>Спать</span>
+                    </button>
+                </div>
+            </section>
+            
             <!-- Другие экраны -->
-            <div class="food-screen" data-tab="food">
-                <h2>🍖 Меню</h2>
-                <div class="food-grid">
-                    <div class="food-item" data-food="bone">
-                        <img src="images/bone.png" alt="Кость">
-                        <span>Кость (10₽)</span>
-                    </div>
-                    <!-- Добавьте другие продукты -->
-                </div>
-            </div>
-
-            <div class="clothes-screen" data-tab="clothes">
-                <h2>👕 Гардероб</h2>
-                <!-- Добавьте одежду -->
-            </div>
-
-            <div class="games-screen" data-tab="games">
-                <h2>🎮 Игры</h2>
-                <!-- Добавьте игры -->
-            </div>
+            <section class="screen shop-screen" data-tab="shop">
+                <!-- Магазин будет здесь -->
+            </section>
         </main>
 
-        <!-- Нижняя панель навигации -->
+        <!-- Нижняя панель -->
         <nav class="tab-bar">
             <button class="tab-btn active" data-tab="pet">
-                <img src="images/pet-icon.png" alt="Питомец">
+                <div class="tab-icon">
+                    <img src="images/home-icon.png" alt="Питомец">
+                </div>
                 <span>Питомец</span>
             </button>
-            <button class="tab-btn" data-tab="food">
-                <img src="images/food-icon.png" alt="Еда">
-                <span>Еда</span>
+            <button class="tab-btn" data-tab="shop">
+                <div class="tab-icon">
+                    <img src="images/shop-icon.png" alt="Магазин">
+                </div>
+                <span>Магазин</span>
             </button>
-            <button class="tab-btn" data-tab="clothes">
-                <img src="images/clothes-icon.png" alt="Одежда">
-                <span>Одежда</span>
+            <button class="tab-btn" data-tab="wardrobe">
+                <div class="tab-icon">
+                    <img src="images/wardrobe-icon.png" alt="Гардероб">
+                </div>
+                <span>Гардероб</span>
             </button>
             <button class="tab-btn" data-tab="games">
-                <img src="images/game-icon.png" alt="Игры">
+                <div class="tab-icon">
+                    <img src="images/games-icon.png" alt="Игры">
+                </div>
                 <span>Игры</span>
             </button>
         </nav>
 
-        <!-- Попап уведомлений -->
+        <!-- Уведомления -->
         <div class="notification" id="notification"></div>
+        
+        <!-- Эффекты -->
+        <div id="effects-container"></div>
     </div>
 
     <script src="script.js"></script>
