@@ -1,0 +1,110 @@
+body {
+    font-family 'Arial', sans-serif;
+    background-color #f5f5f5;
+    margin 0;
+    padding 0;
+    color #333;
+}
+
+.container {
+    max-width 400px;
+    margin 0 auto;
+    padding 20px;
+    text-align center;
+}
+
+h1 {
+    color #ff6b6b;
+}
+
+.dog-container {
+    margin 20px 0;
+}
+
+.dog-container img {
+    width 200px;
+    height 200px;
+    object-fit contain;
+}
+
+.stat {
+    margin 10px 0;
+    display flex;
+    align-items center;
+}
+
+.bar {
+    flex-grow 1;
+    height 20px;
+    background-color #e0e0e0;
+    border-radius 10px;
+    margin 0 10px;
+    overflow hidden;
+}
+
+.fill {
+    height 100%;
+    border-radius 10px;
+    transition width 0.3s, background-color 0.3s;
+}
+
+#hunger-bar {
+    width 100%;
+    background-color #4CAF50;
+}
+
+#happiness-bar {
+    width 100%;
+    background-color #2196F3;
+}
+
+#energy-bar {
+    width 100%;
+    background-color #FFC107;
+}
+
+.coins {
+    margin 15px 0;
+    font-weight bold;
+    color #FF9800;
+}
+
+.buttons {
+    display grid;
+    grid-template-columns 1fr 1fr;
+    gap 10px;
+    margin-top 20px;
+}
+
+.btn {
+    padding 12px;
+    border none;
+    border-radius 8px;
+    background-color #6b8cff;
+    color white;
+    font-weight bold;
+    cursor pointer;
+    transition background-color 0.3s;
+}
+
+.btnhover {
+    background-color #4a6bff;
+}
+
+#feed-btn {
+    background-color #4CAF50;
+}
+
+#play-btn {
+    background-color #2196F3;
+}
+
+#sleep-btn {
+    background-color #FFC107;
+    color #333;
+}
+
+#shop-btn {
+    background-color #9C27B0;
+    grid-column span 2;
+}
