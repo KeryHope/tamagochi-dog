@@ -1,88 +1,82 @@
 // Конфигурация игры
-const config = {
-    prices: {
-        food: 10,
-        toy: 20,
-        clothes: 50,
-        premium: 100
+const CONFIG = {
+    PRICES: {
+        FOOD: 20,
+        TOY: 50,
+        CLOTHES: 100
     },
-    xpPerAction: 5,
-    xpToLevel: 100
+    XP: {
+        PER_ACTION: 10,
+        TO_LEVEL: 100
+    },
+    STATES: {
+        HAPPY: 'happy',
+        HUNGRY: 'hungry',
+        TIRED: 'tired',
+        SAD: 'sad'
+    }
 };
 
 // Состояние игры
-const state = {
+const game = {
     stats: {
         hunger: 80,
-        happiness: 70,
-        energy: 90
+        happiness: 90,
+        energy: 100
     },
-    coins: 250,
+    coins: 500,
     xp: 0,
     level: 1,
-    currentTab: 'pet',
-    petState: 'happy',
-    lastActionTime: Date.now(),
+    state: CONFIG.STATES.HAPPY,
+    lastAction: Date.now(),
     inventory: {
-        food: 3,
-        toys: 1,
+        food: 5,
+        toys: 2,
         clothes: 0
     }
 };
 
 // DOM элементы
-const el = {
-    // Статистика
+const DOM = {
+    pet: document.getElementById('super-pet'),
     hungerBar: document.getElementById('hunger-bar'),
     happinessBar: document.getElementById('happiness-bar'),
     energyBar: document.getElementById('energy-bar'),
     coinsDisplay: document.getElementById('coins'),
     xpProgress: document.getElementById('xp-progress'),
     levelDisplay: document.getElementById('level'),
-    
-    // Питомец
-    petImage: document.getElementById('pet-image'),
     speechBubble: document.getElementById('speech-bubble'),
-    moodIndicator: document.getElementById('mood-indicator'),
-    
-    // Кнопки
+    moodLight: document.getElementById('mood-light'),
+    notification: document.getElementById('notification'),
+    effectsLayer: document.getElementById('effects-layer'),
     feedBtn: document.getElementById('feed-btn'),
     playBtn: document.getElementById('play-btn'),
-    sleepBtn: document.getElementById('sleep-btn'),
-    
-    // Навигация
-    tabButtons: document.querySelectorAll('.tab-btn'),
-    screens: document.querySelectorAll('.screen'),
-    
-    // Уведомления
-    notification: document.getElementById('notification'),
-    
-    // Эффекты
-    effectsContainer: document.getElementById('effects-container')
+    careBtn: document.getElementById('care-btn'),
+    shopBtn: document.getElementById('shop-btn')
 };
 
 // Фразы питомца
-const phrases = {
-    happy: [
+const PHRASES = {
+    HAPPY: [
+        "Я так тебя люблю!",
+        "Ты лучший хозяин!",
+        "Давай поиграем?",
         "Гав-гав!",
-        "Я тебя люблю!",
-        "Поиграем?",
-        "Почеши пузико!",
-        "Ты лучший хозяин!"
+        "Почеши мне животик!"
     ],
-    hungry: [
+    HUNGRY: [
         "Я голодный!",
-        "Хочу есть!",
+        "Хочу вкусняшку!",
+        "Покорми меня!",
         "Где моя еда?",
-        "🍗🍗🍗",
-        "Покорми меня!"
+        "🍗🍗🍗"
     ],
-    sad: [
+    SAD: [
         "Мне грустно...",
+        "Ты меня не любишь?",
         "Почему ты меня игнорируешь?",
         "Я скучаю...",
-        "😢",
-        "Мне нужно внимание!"
+        "😢😢😢"
     ]
 };
 
@@ -96,12 +90,14 @@ function initTelegramApp() {
 // Обновление интерфейса
 function updateUI() {
     // Статистика
-    el.hungerBar.style.width = `${state.stats.hunger}%`;
-    el.happinessBar.style.width = `${state.stats.happiness}%`;
-    el.energyBar.style.width = `${state.stats.energy}%`;
-    el.coinsDisplay.textContent = state.coins;
-    el.xpProgress.style.width = `${(state.xp / config.xpToLevel) * 100}%`;
-    el.levelDisplay.textContent = state.level;
+    DOM.hungerBar.style.width = `${game.stats.hunger}%`;
+    DOM.happinessBar.style.width = `${game.stats.happiness}%`;
+    DOM.energyBar.style.width = `${game.stats.energy}%`;
+    DOM.coinsDisplay.textContent = game.coins;
+    
+    // Опыт и уровень
+    DOM.xpProgress.style.width = `${(game.xp / CONFIG.XP.TO_LEVEL) * 100}%`;
+    DOM.levelDisplay.textContent = game.level;
     
     // Состояние питомца
     updatePetState();
@@ -109,63 +105,88 @@ function updateUI() {
 
 // Обновление состояния питомца
 function updatePetState() {
-    if (state.stats.hunger < 30 || state.stats.happiness < 30) {
-        state.petState = 'sad';
-    } else if (state.stats.hunger < 60 || state.stats.happiness < 60) {
-        state.petState = 'hungry';
+    if (game.stats.hunger < 30 || game.stats.happiness < 30) {
+        game.state = CONFIG.STATES.SAD;
+    } else if (game.stats.hunger < 60) {
+        game.state = CONFIG.STATES.HUNGRY;
+    } else if (game.stats.energy < 30) {
+        game.state = CONFIG.STATES.TIRED;
     } else {
-        state.petState = 'happy';
+        game.state = CONFIG.STATES.HAPPY;
     }
     
-    // Обновление изображения
-    el.petImage.src = `images/dog_${state.petState}.png`;
-    
-    // Обновление индикатора настроения
-    updateMoodIndicator();
+    // Обновление внешнего вида
+    updatePetAppearance();
 }
 
-// Обновление индикатора настроения
-function updateMoodIndicator() {
-    let emoji, color;
+// Обновление внешнего вида питомца
+function updatePetAppearance() {
+    // Изменение цвета подсветки
+    let lightColor, lightOpacity;
     
-    switch(state.petState) {
-        case 'happy':
-            emoji = '😊';
-            color = '#00CEC9';
+    switch(game.state) {
+        case CONFIG.STATES.HAPPY:
+            lightColor = 'rgba(120, 115, 245, 0.3)';
+            lightOpacity = 0.8;
             break;
-        case 'hungry':
-            emoji = '😋';
-            color = '#FDCB6E';
+        case CONFIG.STATES.HUNGRY:
+            lightColor = 'rgba(255, 110, 199, 0.3)';
+            lightOpacity = 0.6;
             break;
-        case 'sad':
-            emoji = '😢';
-            color = '#FF7675';
+        case CONFIG.STATES.SAD:
+            lightColor = 'rgba(255, 110, 199, 0.2)';
+            lightOpacity = 0.4;
+            break;
+        case CONFIG.STATES.TIRED:
+            lightColor = 'rgba(255, 200, 69, 0.3)';
+            lightOpacity = 0.5;
             break;
     }
     
-    el.moodIndicator.textContent = emoji;
-    el.moodIndicator.style.background = color;
+    DOM.moodLight.style.background = `radial-gradient(circle, ${lightColor} 0%, rgba(255,255,255,0) 70%)`;
+    DOM.moodLight.style.opacity = lightOpacity;
+    
+    // Микровзаимодействия
+    if (game.state === CONFIG.STATES.HAPPY) {
+        DOM.pet.style.transform = 'scale(1.05)';
+        setTimeout(() => {
+            DOM.pet.style.transform = 'scale(1)';
+        }, 300);
+    }
 }
 
-// Показать облачко с речью
+// Показать речь
 function showSpeech(text) {
-    el.speechBubble.textContent = text;
-    el.speechBubble.style.opacity = '1';
-    el.speechBubble.style.top = '0';
+    DOM.speechBubble.textContent = text;
+    DOM.speechBubble.style.opacity = '1';
+    DOM.speechBubble.style.top = '20%';
     
     setTimeout(() => {
-        el.speechBubble.style.opacity = '0';
+        DOM.speechBubble.style.opacity = '0';
     }, 2000);
 }
 
 // Показать уведомление
 function showNotification(text) {
-    el.notification.textContent = text;
-    el.notification.style.opacity = '1';
+    DOM.notification.textContent = text;
+    DOM.notification.style.opacity = '1';
     
     setTimeout(() => {
-        el.notification.style.opacity = '0';
+        DOM.notification.style.opacity = '0';
     }, 2000);
+}
+
+// Добавить опыт
+function addXP(amount) {
+    game.xp += amount;
+    
+    if (game.xp >= CONFIG.XP.TO_LEVEL) {
+        game.level++;
+        game.xp = game.xp - CONFIG.XP.TO_LEVEL;
+        showNotification(`🎉 Уровень ${game.level}!`);
+    }
+    
+    updateUI();
 }
 
 // Создать эффект сердечек
@@ -174,169 +195,150 @@ function createHearts(count = 5) {
         setTimeout(() => {
             const heart = document.createElement('div');
             heart.className = 'heart-effect';
-            heart.textContent = '❤️';
+            heart.innerHTML = '❤️';
             heart.style.left = `${40 + Math.random() * 20}%`;
-            heart.style.fontSize = `${20 + Math.random() * 10}px`;
+            heart.style.fontSize = `${24 + Math.random() * 12}px`;
             heart.style.animationDuration = `${2 + Math.random()}s`;
-            el.effectsContainer.appendChild(heart);
+            DOM.effectsLayer.appendChild(heart);
             
             setTimeout(() => heart.remove(), 3000);
         }, i * 200);
     }
 }
 
-// Создать эффект монет
-function createCoins(count = 3) {
-    for (let i = 0; i < count; i++) {
-        setTimeout(() => {
-            const coin = document.createElement('div');
-            coin.className = 'coin-effect';
-            coin.textContent = '💰';
-            coin.style.left = `${30 + Math.random() * 40}%`;
-            coin.style.fontSize = `${20 + Math.random() * 10}px`;
-            el.effectsContainer.appendChild(coin);
-            
-            setTimeout(() => coin.remove(), 1000);
-        }, i * 100);
-    }
-}
-
-// Добавить опыт
-function addXP(amount) {
-    state.xp += amount;
-    
-    if (state.xp >= config.xpToLevel) {
-        state.level++;
-        state.xp = state.xp - config.xpToLevel;
-        showNotification(`🎉 Уровень ${state.level}!`);
-    }
-    
-    updateUI();
-}
-
 // Кормление
 function feed() {
-    if (state.stats.hunger >= 100) {
+    if (game.stats.hunger >= 100) {
         showSpeech("Я не голоден!");
         return;
     }
     
-    if (state.inventory.food <= 0) {
+    if (game.inventory.food <= 0) {
         showNotification("Нет еды! Купите в магазине");
         return;
     }
     
-    state.inventory.food--;
-    state.stats.hunger = Math.min(100, state.stats.hunger + 30);
-    state.stats.happiness = Math.min(100, state.stats.happiness + 10);
-    state.lastActionTime = Date.now();
+    game.inventory.food--;
+    game.stats.hunger = Math.min(100, game.stats.hunger + 30);
+    game.stats.happiness = Math.min(100, game.stats.happiness + 10);
+    game.lastAction = Date.now();
     
     // Анимации
-    el.petImage.src = 'images/dog_eating.gif';
-    createHearts();
-    addXP(config.xpPerAction);
+    createHearts(8);
+    addXP(CONFIG.XP.PER_ACTION);
+    
+    // Временное изменение изображения
+    const originalSrc = DOM.pet.src;
+    DOM.pet.src = 'images/dog_eating.png';
     
     setTimeout(() => {
-        updatePetState();
-        showSpeech("Вкусно!");
-    }, 2000);
-    
-    updateUI();
+        DOM.pet.src = originalSrc;
+        showSpeech("Вкусно! Спасибо!");
+        updateUI();
+    }, 1500);
 }
 
 // Игра
 function play() {
-    if (state.stats.energy < 20) {
+    if (game.stats.energy < 20) {
         showSpeech("Я устал...");
         return;
     }
     
-    state.stats.happiness = Math.min(100, state.stats.happiness + 30);
-    state.stats.energy = Math.max(0, state.stats.energy - 20);
-    state.stats.hunger = Math.max(0, state.stats.hunger - 10);
-    state.lastActionTime = Date.now();
+    game.stats.happiness = Math.min(100, game.stats.happiness + 30);
+    game.stats.energy = Math.max(0, game.stats.energy - 20);
+    game.stats.hunger = Math.max(0, game.stats.hunger - 10);
+    game.lastAction = Date.now();
     
     // Анимации
-    el.petImage.src = 'images/dog_playing.gif';
-    createHearts(8);
-    addXP(config.xpPerAction);
+    createHearts(10);
+    addXP(CONFIG.XP.PER_ACTION);
+    
+    // Временное изменение изображения
+    const originalSrc = DOM.pet.src;
+    DOM.pet.src = 'images/dog_playing.png';
     
     setTimeout(() => {
-        updatePetState();
+        DOM.pet.src = originalSrc;
         showSpeech("Это было весело!");
-    }, 3000);
-    
-    updateUI();
+        updateUI();
+    }, 2000);
 }
 
-// Сон
-function sleep() {
-    if (state.petState === 'sleeping') return;
+// Уход
+function care() {
+    if (game.stats.energy >= 90) {
+        showSpeech("Я не хочу спать!");
+        return;
+    }
     
-    state.petState = 'sleeping';
-    el.petImage.src = 'images/dog_sleeping.gif';
-    disableButtons();
+    game.stats.energy = 100;
+    game.stats.happiness = Math.min(100, game.stats.happiness + 15);
+    game.stats.hunger = Math.max(0, game.stats.hunger - 10);
+    game.lastAction = Date.now();
+    
+    // Анимации
+    addXP(CONFIG.XP.PER_ACTION * 2);
+    
+    // Временное изменение изображения
+    const originalSrc = DOM.pet.src;
+    DOM.pet.src = 'images/dog_sleeping.png';
     
     setTimeout(() => {
-        state.stats.energy = 100;
-        state.stats.hunger = Math.max(0, state.stats.hunger - 15);
-        updatePetState();
+        DOM.pet.src = originalSrc;
         showSpeech("Я выспался!");
-        enableButtons();
-        addXP(config.xpPerAction * 2);
-    }, 5000);
-    
-    updateUI();
-}
-
-// Переключение вкладок
-function switchTab(tabId) {
-    state.currentTab = tabId;
-    
-    // Обновление активной кнопки
-    el.tabButtons.forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.tab === tabId);
-    });
-    
-    // Обновление экранов
-    el.screens.forEach(screen => {
-        screen.classList.toggle('active', screen.dataset.tab === tabId);
-    });
-}
-
-// Отключение кнопок
-function disableButtons() {
-    el.feedBtn.disabled = true;
-    el.playBtn.disabled = true;
-    el.sleepBtn.disabled = true;
-}
-
-// Включение кнопок
-function enableButtons() {
-    el.feedBtn.disabled = false;
-    el.playBtn.disabled = false;
-    el.sleepBtn.disabled = false;
+        updateUI();
+    }, 3000);
 }
 
 // Игровой цикл
 function gameLoop() {
     const now = Date.now();
-    const hoursPassed = (now - state.lastActionTime) / (1000 * 60 * 60);
+    const hoursPassed = (now - game.lastAction) / (1000 * 60 * 60);
     
     if (hoursPassed > 4) {
-        state.stats.hunger = Math.max(0, state.stats.hunger - 10);
-        state.stats.happiness = Math.max(0, state.stats.happiness - 15);
+        game.stats.hunger = Math.max(0, game.stats.hunger - 15);
+        game.stats.happiness = Math.max(0, game.stats.happiness - 20);
     } else if (hoursPassed > 2) {
-        state.stats.hunger = Math.max(0, state.stats.hunger - 5);
-        state.stats.happiness = Math.max(0, state.stats.happiness - 5);
+        game.stats.hunger = Math.max(0, game.stats.hunger - 8);
+        game.stats.happiness = Math.max(0, game.stats.happiness - 10);
     }
     
-    if (state.petState !== 'sleeping') {
-        state.stats.energy = Math.max(0, state.stats.energy - 2);
-    }
+    game.stats.energy = Math.max(0, game.stats.energy - 2);
     
     updateUI();
+    
+    // Случайные фразы
+    if (Math.random() > 0.9) {
+        showRandomPhrase();
+    }
 }
+
+// Показать случайную фразу
+function showRandomPhrase() {
+    if (game.state === CONFIG.STATES.HAPPY) {
+        const phrase = PHRASES.HAPPY[Math.floor(Math.random() * PHRASES.HAPPY.length)];
+        showSpeech(phrase);
+    } else if (game.state === CONFIG.STATES.HUNGRY) {
+        const phrase = PHRASES.HUNGRY[Math.floor(Math.random() * PHRASES.HUNGRY.length)];
+        showSpeech(phrase);
+    } else if (game.state === CONFIG.STATES.SAD) {
+        const phrase = PHRASES.SAD[Math.floor(Math.random() * PHRASES.SAD.length)];
+        showSpeech(phrase);
+    }
+}
+
+// Клик по питомцу
+DOM.pet.addEventListener('click', () => {
+    if (game.state === CONFIG.STATES.HAPPY) {
+        DOM.pet.style.transform = 'scale(1.1)';
+        setTimeout(() => {
+            DOM.pet.style.transform = 'scale(1)';
+        }, 300);
+        
+        showRandomPhrase();
+    }
+});
 
 // Инициализация игры
 function initGame() {
@@ -344,35 +346,16 @@ function initGame() {
     updateUI();
     
     // Обработчики событий
-    el.feedBtn.addEventListener('click', feed);
-    el.playBtn.addEventListener('click', play);
-    el.sleepBtn.addEventListener('click', sleep);
-    
-    // Клик по питомцу
-    el.petImage.addEventListener('click', () => {
-        if (state.petState === 'happy') {
-            const randomPhrase = phrases.happy[Math.floor(Math.random() * phrases.happy.length)];
-            showSpeech(randomPhrase);
-        } else if (state.petState === 'hungry') {
-            const randomPhrase = phrases.hungry[Math.floor(Math.random() * phrases.hungry.length)];
-            showSpeech(randomPhrase);
-        } else if (state.petState === 'sad') {
-            const randomPhrase = phrases.sad[Math.floor(Math.random() * phrases.sad.length)];
-            showSpeech(randomPhrase);
-        }
-    });
-    
-    // Переключение вкладок
-    el.tabButtons.forEach(btn => {
-        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-    });
+    DOM.feedBtn.addEventListener('click', feed);
+    DOM.playBtn.addEventListener('click', play);
+    DOM.careBtn.addEventListener('click', care);
     
     // Игровой цикл
     setInterval(gameLoop, 60000);
     
     // Приветственное сообщение
     setTimeout(() => {
-        showSpeech("Привет, хозяин! Давай дружить!");
+        showSpeech("Привет! Я твой новый пёсик!");
     }, 1000);
 }
 
