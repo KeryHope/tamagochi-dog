@@ -3,53 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DOGFIGHT: Боевой Пёс</title>
+    <title>🐶 Весёлый Пёсик | Tamagochi</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&display=swap" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <div class="combat-container">
-        <!-- Статус-бар -->
-        <div class="hud">
-            <div class="health-bar">
-                <div class="hp-fill" id="hp-bar"></div>
-                <span>HP: <span id="hp-text">100</span>/100</span>
-            </div>
-            <div class="rage-bar">
-                <div class="rage-fill" id="rage-bar"></div>
-                <span>ЯРОСТЬ: <span id="rage-text">0</span>/100</span>
-            </div>
-            <div class="coins-display">
-                💣 <span id="coins">50</span> | 🏆 <span id="wins">0</span>
+    <div class="app-container">
+        <!-- Шапка с монетами -->
+        <div class="header">
+            <h1>🐕 Весёлый Пёсик</h1>
+            <div class="coins">
+                <span id="coins">50</span> 
+                <img src="images/coin.png" alt="Монеты" class="coin-icon">
             </div>
         </div>
 
-        <!-- Боевая арена -->
-        <div class="arena">
-            <div class="enemy" id="enemy">
-                <img src="images/cat_enemy.png" alt="Враг">
-                <div class="enemy-hp" id="enemy-hp">100%</div>
+        <!-- Основное игровое поле -->
+        <div class="game-area">
+            <!-- Облачко с речью -->
+            <div class="speech-bubble" id="speech-bubble"></div>
+            
+            <!-- Собака с анимацией -->
+            <div class="dog-container">
+                <img id="dog" src="images/dog_happy.png" alt="Пёсик">
             </div>
             
-            <div class="dog-combat" id="dog">
-                <img src="images/dog_combat.png" alt="Боевой Пёс">
-                <div class="combat-effects" id="combat-effects"></div>
+            <!-- Эффекты -->
+            <div id="effects"></div>
+        </div>
+
+        <!-- Статус-бары -->
+        <div class="status-bars">
+            <div class="stat">
+                <span>🍖</span>
+                <div class="bar"><div id="hunger-bar"></div></div>
+            </div>
+            <div class="stat">
+                <span>🎾</span>
+                <div class="bar"><div id="happiness-bar"></div></div>
+            </div>
+            <div class="stat">
+                <span>💤</span>
+                <div class="bar"><div id="energy-bar"></div></div>
             </div>
         </div>
 
-        <!-- Боевое меню -->
-        <div class="combat-menu">
-            <button id="attack-btn" class="combat-btn attack">🗡 АТАКА (10⚡)</button>
-            <button id="special-btn" class="combat-btn special">💥 УЛЬТРА (50⚡)</button>
-            <button id="heal-btn" class="combat-btn heal">❤️ ЛЕЧЕНИЕ (20₽)</button>
-            <button id="upgrade-btn" class="combat-btn upgrade">🛠 АПГРЕЙД</button>
+        <!-- Кнопки действий -->
+        <div class="actions">
+            <button id="feed-btn" class="btn pulse">🍖 Покормить</button>
+            <button id="play-btn" class="btn pulse">⚽ Играть</button>
+            <button id="sleep-btn" class="btn pulse">🌙 Спать</button>
+            <button id="shop-btn" class="btn shop-btn">🛍️ Магазин</button>
         </div>
 
-        <!-- Лог боя -->
-        <div class="combat-log" id="combat-log">
-            <div>⚔️ БОЙ НАЧИНАЕТСЯ!</div>
-        </div>
+        <!-- Уведомления -->
+        <div id="notification"></div>
     </div>
 
     <script src="script.js"></script>
