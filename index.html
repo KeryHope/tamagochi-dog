@@ -3,161 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌟 Super Dog — Виртуальный питомец</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap">
+    <title>🐶 Super Dog — Виртуальный питомец</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <div class="super-app">
-        <!-- Фон с градиентом -->
-        <div class="bg-gradient"></div>
+    <div class="app-container">
+        <!-- Анимированный фон -->
+        <div class="background-animation">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
         
-        <!-- Главный контейнер -->
-        <div class="main-container">
-            <!-- Шапка -->
-            <header class="super-header">
-                <div class="xp-container">
-                    <div class="level-badge">LVL <span id="level">1</span></div>
-                    <div class="xp-bar"><div id="xp-progress"></div></div>
+        <!-- Основной контейнер -->
+        <div class="game-container">
+            <!-- Статус бар -->
+            <div class="status-bar">
+                <div class="level-container">
+                    <span class="level-icon">⭐</span>
+                    <span id="level">1</span>
+                    <div class="xp-bar">
+                        <div id="xp-progress" class="xp-progress"></div>
+                    </div>
                 </div>
+                
                 <div class="coins-container">
-                    <img src="images/coin.png" alt="Монеты" class="coin-icon">
                     <span id="coins">500</span>
+                    <img src="images/coin.webp" alt="Монеты" class="coin-icon">
                 </div>
-            </header>
+            </div>
 
-            <!-- Основной экран -->
-            <main class="content-area">
-                <!-- Область питомца -->
-                <div class="pet-zone">
-                    <div class="speech-bubble" id="speech-bubble"></div>
-                    <img src="images/dog_super.png" alt="Супер пёсик" id="super-pet" class="super-pet">
-                    <div class="mood-light" id="mood-light"></div>
-                    <div class="pet-clothes" id="pet-clothes"></div>
+            <!-- Область питомца -->
+            <div class="pet-container">
+                <div id="speech-bubble" class="speech-bubble"></div>
+                <div class="pet-animation" id="pet-animation">
+                    <img src="images/dog/default.webp" alt="Пёсик" id="pet" class="pet">
+                    <div id="pet-clothes" class="pet-clothes"></div>
                 </div>
+                <div id="mood-indicator" class="mood-indicator"></div>
+            </div>
 
-                <!-- Статус бары -->
-                <div class="super-stats">
-                    <div class="stat-item">
-                        <img src="images/icon_hunger.png" alt="Голод" class="stat-icon">
-                        <div class="stat-bar"><div id="hunger-bar"></div></div>
-                    </div>
-                    <div class="stat-item">
-                        <img src="images/icon_happy.png" alt="Счастье" class="stat-icon">
-                        <div class="stat-bar"><div id="happiness-bar"></div></div>
-                    </div>
-                    <div class="stat-item">
-                        <img src="images/icon_energy.png" alt="Энергия" class="stat-icon">
-                        <div class="stat-bar"><div id="energy-bar"></div></div>
+            <!-- Индикаторы состояний -->
+            <div class="stats-container">
+                <div class="stat-item">
+                    <img src="images/icons/hunger.webp" class="stat-icon">
+                    <div class="stat-bar">
+                        <div id="hunger-bar" class="stat-fill hunger"></div>
                     </div>
                 </div>
-            </main>
+                <div class="stat-item">
+                    <img src="images/icons/happiness.webp" class="stat-icon">
+                    <div class="stat-bar">
+                        <div id="happiness-bar" class="stat-fill happiness"></div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <img src="images/icons/energy.webp" class="stat-icon">
+                    <div class="stat-bar">
+                        <div id="energy-bar" class="stat-fill energy"></div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Панель действий -->
-            <nav class="action-panel">
-                <button class="action-btn" id="feed-btn">
-                    <img src="images/btn_food.png" alt="Кормить">
+            <div class="actions-container">
+                <button id="feed-btn" class="action-btn">
+                    <img src="images/buttons/food.webp" class="btn-icon">
                     <span>Кормить (<span id="food-count">5</span>)</span>
                 </button>
-                <button class="action-btn" id="play-btn">
-                    <img src="images/btn_game.png" alt="Играть">
+                <button id="play-btn" class="action-btn">
+                    <img src="images/buttons/game.webp" class="btn-icon">
                     <span>Играть (<span id="toy-count">2</span>)</span>
                 </button>
-                <button class="action-btn" id="care-btn">
-                    <img src="images/btn_care.png" alt="Уход">
+                <button id="care-btn" class="action-btn">
+                    <img src="images/buttons/care.webp" class="btn-icon">
                     <span>Уход</span>
                 </button>
-                <button class="action-btn" id="shop-btn">
-                    <img src="images/btn_shop.png" alt="Магазин">
+                <button id="shop-btn" class="action-btn">
+                    <img src="images/buttons/shop.webp" class="btn-icon">
                     <span>Магазин</span>
                 </button>
-            </nav>
+            </div>
         </div>
 
         <!-- Эффекты -->
-        <div id="effects-layer"></div>
+        <div id="effects-layer" class="effects-layer"></div>
 
         <!-- Уведомления -->
-        <div class="super-notification" id="notification"></div>
+        <div id="notification" class="notification"></div>
 
         <!-- Модальные окна -->
-        <div class="modal-overlay" id="modal-overlay"></div>
+        <div id="modal-overlay" class="modal-overlay"></div>
         
         <!-- Магазин -->
-        <div class="modal" id="shop-modal">
+        <div id="shop-modal" class="modal shop-modal">
             <div class="modal-header">
-                <h3>🐶 Магазин</h3>
-                <button class="close-modal" id="close-shop">&times;</button>
+                <h2>🛍️ Магазин</h2>
+                <button id="close-shop" class="close-btn">&times;</button>
             </div>
-            <div class="modal-body">
-                <div class="shop-tabs">
-                    <button class="tab-btn active" data-tab="food">Еда</button>
-                    <button class="tab-btn" data-tab="toys">Игрушки</button>
-                    <button class="tab-btn" data-tab="clothes">Одежда</button>
+            <div class="modal-content">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="food">🍗 Еда</button>
+                    <button class="tab-btn" data-tab="toys">🎾 Игрушки</button>
+                    <button class="tab-btn" data-tab="clothes">👕 Одежда</button>
                 </div>
                 
-                <div class="shop-items" id="food-items">
-                    <!-- Товары будут добавлены через JS -->
+                <div id="food-tab" class="tab-content active">
+                    <div class="items-grid" id="food-items"></div>
                 </div>
                 
-                <div class="shop-items hidden" id="toys-items">
-                    <!-- Товары будут добавлены через JS -->
+                <div id="toys-tab" class="tab-content">
+                    <div class="items-grid" id="toys-items"></div>
                 </div>
                 
-                <div class="shop-items hidden" id="clothes-items">
-                    <!-- Товары будут добавлены через JS -->
+                <div id="clothes-tab" class="tab-content">
+                    <div class="items-grid" id="clothes-items"></div>
                 </div>
             </div>
         </div>
 
         <!-- Инвентарь -->
-        <div class="modal" id="inventory-modal">
+        <div id="inventory-modal" class="modal inventory-modal">
             <div class="modal-header">
-                <h3>🎒 Инвентарь</h3>
-                <button class="close-modal" id="close-inventory">&times;</button>
+                <h2>🎒 Инвентарь</h2>
+                <button id="close-inventory" class="close-btn">&times;</button>
             </div>
-            <div class="modal-body">
-                <div class="inventory-tabs">
-                    <button class="tab-btn active" data-tab="inv-food">Еда</button>
-                    <button class="tab-btn" data-tab="inv-toys">Игрушки</button>
-                    <button class="tab-btn" data-tab="inv-clothes">Одежда</button>
+            <div class="modal-content">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="food">🍗 Еда</button>
+                    <button class="tab-btn" data-tab="toys">🎾 Игрушки</button>
+                    <button class="tab-btn" data-tab="clothes">👕 Одежда</button>
                 </div>
                 
-                <div class="inventory-items" id="inv-food-items">
-                    <!-- Предметы будут добавлены через JS -->
+                <div id="inv-food-tab" class="tab-content active">
+                    <div class="items-grid" id="inv-food-items"></div>
                 </div>
                 
-                <div class="inventory-items hidden" id="inv-toys-items">
-                    <!-- Предметы будут добавлены через JS -->
+                <div id="inv-toys-tab" class="tab-content">
+                    <div class="items-grid" id="inv-toys-items"></div>
                 </div>
                 
-                <div class="inventory-items hidden" id="inv-clothes-items">
-                    <!-- Предметы будут добавлены через JS -->
+                <div id="inv-clothes-tab" class="tab-content">
+                    <div class="items-grid" id="inv-clothes-items"></div>
                 </div>
             </div>
         </div>
 
         <!-- Достижения -->
-        <div class="modal" id="achievements-modal">
+        <div id="achievements-modal" class="modal achievements-modal">
             <div class="modal-header">
-                <h3>🏆 Достижения</h3>
-                <button class="close-modal" id="close-achievements">&times;</button>
+                <h2>🏆 Достижения</h2>
+                <button id="close-achievements" class="close-btn">&times;</button>
             </div>
-            <div class="modal-body">
-                <div class="achievements-grid" id="achievements-list">
-                    <!-- Достижения будут добавлены через JS -->
-                </div>
+            <div class="modal-content">
+                <div class="achievements-grid" id="achievements-list"></div>
             </div>
         </div>
 
         <!-- Аудио элементы -->
-        <audio id="sound-click" src="sounds/click.wav" preload="auto"></audio>
-        <audio id="sound-coin" src="sounds/coin.wav" preload="auto"></audio>
-        <audio id="sound-bark" src="sounds/bark.wav" preload="auto"></audio>
-        <audio id="sound-eat" src="sounds/eat.wav" preload="auto"></audio>
-        <audio id="sound-levelup" src="sounds/levelup.wav" preload="auto"></audio>
+        <audio id="sound-click" src="sounds/click.mp3" preload="auto"></audio>
+        <audio id="sound-coin" src="sounds/coin.mp3" preload="auto"></audio>
+        <audio id="sound-bark" src="sounds/bark.mp3" preload="auto"></audio>
+        <audio id="sound-eat" src="sounds/eat.mp3" preload="auto"></audio>
+        <audio id="sound-levelup" src="sounds/levelup.mp3" preload="auto"></audio>
     </div>
 
     <script src="script.js"></script>
