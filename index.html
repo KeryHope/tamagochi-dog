@@ -3,62 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐶 Весёлый Пёсик | Tamagochi</title>
+    <title>🐶 Пёсик | Современный Tamagochi</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap">
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&display=swap" rel="stylesheet">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
     <div class="app-container">
-        <!-- Шапка с монетами -->
+        <!-- Шапка в стиле iOS -->
         <div class="header">
-            <h1>🐕 Весёлый Пёсик</h1>
+            <h1>Мой Пёсик</h1>
             <div class="coins">
-                <span id="coins">50</span> 
+                <span id="coins">50</span>
                 <img src="images/coin.png" alt="Монеты" class="coin-icon">
             </div>
         </div>
 
-        <!-- Основное игровое поле -->
-        <div class="game-area">
-            <!-- Облачко с речью -->
-            <div class="speech-bubble" id="speech-bubble"></div>
-            
-            <!-- Собака с анимацией -->
+        <!-- Карточка с собакой -->
+        <div class="dog-card">
             <div class="dog-container">
                 <img id="dog" src="images/dog_happy.png" alt="Пёсик">
             </div>
-            
-            <!-- Эффекты -->
-            <div id="effects"></div>
         </div>
 
         <!-- Статус-бары -->
         <div class="status-bars">
             <div class="stat">
-                <span>🍖</span>
-                <div class="bar"><div id="hunger-bar"></div></div>
+                <span>🍗</span>
+                <div class="bar-container">
+                    <div id="hunger-bar" class="bar"></div>
+                </div>
             </div>
             <div class="stat">
                 <span>🎾</span>
-                <div class="bar"><div id="happiness-bar"></div></div>
+                <div class="bar-container">
+                    <div id="happiness-bar" class="bar"></div>
+                </div>
             </div>
             <div class="stat">
                 <span>💤</span>
-                <div class="bar"><div id="energy-bar"></div></div>
+                <div class="bar-container">
+                    <div id="energy-bar" class="bar"></div>
+                </div>
             </div>
         </div>
 
         <!-- Кнопки действий -->
         <div class="actions">
-            <button id="feed-btn" class="btn pulse">🍖 Покормить</button>
-            <button id="play-btn" class="btn pulse">⚽ Играть</button>
-            <button id="sleep-btn" class="btn pulse">🌙 Спать</button>
-            <button id="shop-btn" class="btn shop-btn">🛍️ Магазин</button>
+            <button id="feed-btn" class="btn">🍖 Покормить</button>
+            <button id="play-btn" class="btn">⚽ Играть</button>
+            <button id="sleep-btn" class="btn">🌙 Спать</button>
+            <button id="shop-btn" class="btn">🛍️ Магазин</button>
         </div>
-
-        <!-- Уведомления -->
-        <div id="notification"></div>
     </div>
 
     <script src="script.js"></script>
