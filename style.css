@@ -1,347 +1,165 @@
-/* Базовые настройки */
-:root {
-    --primary: #FF6EC7;
-    --secondary: #7873F5;
-    --accent: #FFC845;
-    --bg-gradient: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
-    --text-light: #FFFFFF;
-    --glass: rgba(255, 255, 255, 0.15);
-    --glass-border: rgba(255, 255, 255, 0.25);
-    --shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌟 Super Dog — Виртуальный питомец</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div class="super-app">
+        <!-- Фон с градиентом -->
+        <div class="bg-gradient"></div>
+        
+        <!-- Главный контейнер -->
+        <div class="main-container">
+            <!-- Шапка -->
+            <header class="super-header">
+                <div class="xp-container">
+                    <div class="level-badge">LVL <span id="level">1</span></div>
+                    <div class="xp-bar"><div id="xp-progress"></div></div>
+                </div>
+                <div class="coins-container">
+                    <img src="images/coin.png" alt="Монеты" class="coin-icon">
+                    <span id="coins">500</span>
+                </div>
+            </header>
 
-/* Общие стили */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+            <!-- Основной экран -->
+            <main class="content-area">
+                <!-- Область питомца -->
+                <div class="pet-zone">
+                    <div class="speech-bubble" id="speech-bubble"></div>
+                    <img src="images/dog_super.png" alt="Супер пёсик" id="super-pet" class="super-pet">
+                    <div class="mood-light" id="mood-light"></div>
+                    <div class="pet-clothes" id="pet-clothes"></div>
+                </div>
 
-body {
-    font-family: 'Montserrat', sans-serif;
-    color: var(--text-light);
-    overflow: hidden;
-    height: 100vh;
-}
+                <!-- Статус бары -->
+                <div class="super-stats">
+                    <div class="stat-item">
+                        <img src="images/icon_hunger.png" alt="Голод" class="stat-icon">
+                        <div class="stat-bar"><div id="hunger-bar"></div></div>
+                    </div>
+                    <div class="stat-item">
+                        <img src="images/icon_happy.png" alt="Счастье" class="stat-icon">
+                        <div class="stat-bar"><div id="happiness-bar"></div></div>
+                    </div>
+                    <div class="stat-item">
+                        <img src="images/icon_energy.png" alt="Энергия" class="stat-icon">
+                        <div class="stat-bar"><div id="energy-bar"></div></div>
+                    </div>
+                </div>
+            </main>
 
-.super-app {
-    position: relative;
-    height: 100vh;
-    width: 100vw;
-    overflow: hidden;
-}
+            <!-- Панель действий -->
+            <nav class="action-panel">
+                <button class="action-btn" id="feed-btn">
+                    <img src="images/btn_food.png" alt="Кормить">
+                    <span>Кормить (<span id="food-count">5</span>)</span>
+                </button>
+                <button class="action-btn" id="play-btn">
+                    <img src="images/btn_game.png" alt="Играть">
+                    <span>Играть (<span id="toy-count">2</span>)</span>
+                </button>
+                <button class="action-btn" id="care-btn">
+                    <img src="images/btn_care.png" alt="Уход">
+                    <span>Уход</span>
+                </button>
+                <button class="action-btn" id="shop-btn">
+                    <img src="images/btn_shop.png" alt="Магазин">
+                    <span>Магазин</span>
+                </button>
+            </nav>
+        </div>
 
-/* Фон с градиентом */
-.bg-gradient {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--bg-gradient);
-    z-index: -1;
-}
+        <!-- Эффекты -->
+        <div id="effects-layer"></div>
 
-/* Главный контейнер */
-.main-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    padding: 20px;
-    max-width: 500px;
-    margin: 0 auto;
-}
+        <!-- Уведомления -->
+        <div class="super-notification" id="notification"></div>
 
-/* Шапка */
-.super-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    z-index: 10;
-}
+        <!-- Модальные окна -->
+        <div class="modal-overlay" id="modal-overlay"></div>
+        
+        <!-- Магазин -->
+        <div class="modal" id="shop-modal">
+            <div class="modal-header">
+                <h3>🐶 Магазин</h3>
+                <button class="close-modal" id="close-shop">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="shop-tabs">
+                    <button class="tab-btn active" data-tab="food">Еда</button>
+                    <button class="tab-btn" data-tab="toys">Игрушки</button>
+                    <button class="tab-btn" data-tab="clothes">Одежда</button>
+                </div>
+                
+                <div class="shop-items" id="food-items">
+                    <!-- Товары будут добавлены через JS -->
+                </div>
+                
+                <div class="shop-items hidden" id="toys-items">
+                    <!-- Товары будут добавлены через JS -->
+                </div>
+                
+                <div class="shop-items hidden" id="clothes-items">
+                    <!-- Товары будут добавлены через JS -->
+                </div>
+            </div>
+        </div>
 
-.xp-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+        <!-- Инвентарь -->
+        <div class="modal" id="inventory-modal">
+            <div class="modal-header">
+                <h3>🎒 Инвентарь</h3>
+                <button class="close-modal" id="close-inventory">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="inventory-tabs">
+                    <button class="tab-btn active" data-tab="inv-food">Еда</button>
+                    <button class="tab-btn" data-tab="inv-toys">Игрушки</button>
+                    <button class="tab-btn" data-tab="inv-clothes">Одежда</button>
+                </div>
+                
+                <div class="inventory-items" id="inv-food-items">
+                    <!-- Предметы будут добавлены через JS -->
+                </div>
+                
+                <div class="inventory-items hidden" id="inv-toys-items">
+                    <!-- Предметы будут добавлены через JS -->
+                </div>
+                
+                <div class="inventory-items hidden" id="inv-clothes-items">
+                    <!-- Предметы будут добавлены через JS -->
+                </div>
+            </div>
+        </div>
 
-.level-badge {
-    background: var(--glass);
-    border: 1px solid var(--glass-border);
-    border-radius: 20px;
-    padding: 6px 12px;
-    font-weight: 800;
-    font-size: 14px;
-    backdrop-filter: blur(10px);
-}
+        <!-- Достижения -->
+        <div class="modal" id="achievements-modal">
+            <div class="modal-header">
+                <h3>🏆 Достижения</h3>
+                <button class="close-modal" id="close-achievements">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="achievements-grid" id="achievements-list">
+                    <!-- Достижения будут добавлены через JS -->
+                </div>
+            </div>
+        </div>
 
-.xp-bar {
-    width: 120px;
-    height: 8px;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-    overflow: hidden;
-}
+        <!-- Аудио элементы -->
+        <audio id="sound-click" src="sounds/click.wav" preload="auto"></audio>
+        <audio id="sound-coin" src="sounds/coin.wav" preload="auto"></audio>
+        <audio id="sound-bark" src="sounds/bark.wav" preload="auto"></audio>
+        <audio id="sound-eat" src="sounds/eat.wav" preload="auto"></audio>
+        <audio id="sound-levelup" src="sounds/levelup.wav" preload="auto"></audio>
+    </div>
 
-#xp-progress {
-    height: 100%;
-    width: 30%;
-    background: linear-gradient(90deg, var(--accent), #FF9F4B);
-    border-radius: 4px;
-    transition: width 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.coins-container {
-    display: flex;
-    align-items: center;
-    background: var(--glass);
-    border: 1px solid var(--glass-border);
-    border-radius: 20px;
-    padding: 6px 12px;
-    backdrop-filter: blur(10px);
-    font-weight: 700;
-}
-
-.coin-icon {
-    width: 20px;
-    height: 20px;
-    margin-right: 6px;
-}
-
-/* Область контента */
-.content-area {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-/* Зона питомца */
-.pet-zone {
-    position: relative;
-    height: 50vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.super-pet {
-    width: 280px;
-    height: 280px;
-    object-fit: contain;
-    filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.3));
-    transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-    z-index: 2;
-}
-
-.speech-bubble {
-    position: absolute;
-    top: 20%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: white;
-    color: #333;
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-size: 16px;
-    font-weight: 600;
-    opacity: 0;
-    transition: all 0.3s;
-    white-space: nowrap;
-    z-index: 3;
-    box-shadow: var(--shadow);
-}
-
-.speech-bubble:after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 10px 10px 0;
-    border-style: solid;
-    border-color: white transparent;
-}
-
-.mood-light {
-    position: absolute;
-    bottom: 10%;
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
-    border-radius: 50%;
-    z-index: 1;
-    opacity: 0;
-    transition: opacity 0.5s;
-}
-
-/* Статистика */
-.super-stats {
-    background: var(--glass);
-    border: 1px solid var(--glass-border);
-    border-radius: 20px;
-    padding: 20px;
-    backdrop-filter: blur(10px);
-    margin-bottom: 20px;
-}
-
-.stat-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.stat-item:last-child {
-    margin-bottom: 0;
-}
-
-.stat-icon {
-    width: 30px;
-    height: 30px;
-    margin-right: 15px;
-    object-fit: contain;
-}
-
-.stat-bar {
-    flex: 1;
-    height: 12px;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 6px;
-    overflow: hidden;
-}
-
-.stat-bar div {
-    height: 100%;
-    border-radius: 6px;
-    transition: width 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-#hunger-bar {
-    background: linear-gradient(90deg, #FF6EC7, #FF8E8E);
-}
-
-#happiness-bar {
-    background: linear-gradient(90deg, #7873F5, #A18CD1);
-}
-
-#energy-bar {
-    background: linear-gradient(90deg, #FFC845, #FF9F4B);
-}
-
-/* Панель действий */
-.action-panel {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    padding: 10px 0;
-}
-
-.action-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: var(--glass);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    padding: 12px 5px;
-    backdrop-filter: blur(10px);
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-    border: none;
-    color: var(--text-light);
-    font-weight: 600;
-    font-size: 12px;
-}
-
-.action-btn:hover {
-    transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.25);
-}
-
-.action-btn img {
-    width: 30px;
-    height: 30px;
-    margin-bottom: 6px;
-    object-fit: contain;
-    transition: transform 0.3s;
-}
-
-.action-btn:hover img {
-    transform: scale(1.1);
-}
-
-/* Эффекты */
-#effects-layer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    overflow: hidden;
-    z-index: 5;
-}
-
-.heart-effect {
-    position: absolute;
-    font-size: 24px;
-    color: #FF6EC7;
-    animation: floatUp 3s ease-out forwards;
-}
-
-.coin-effect {
-    position: absolute;
-    font-size: 24px;
-    animation: coinSpin 1.5s ease-out forwards;
-}
-
-/* Уведомления */
-.super-notification {
-    position: fixed;
-    top: 50px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--primary);
-    color: white;
-    padding: 12px 24px;
-    border-radius: 30px;
-    font-weight: 700;
-    box-shadow: var(--shadow);
-    opacity: 0;
-    transition: all 0.3s;
-    z-index: 100;
-    max-width: 80%;
-    text-align: center;
-}
-
-/* Анимации */
-@keyframes floatUp {
-    0% { transform: translateY(0) scale(0.8); opacity: 1; }
-    100% { transform: translateY(-100px) scale(1.2); opacity: 0; }
-}
-
-@keyframes coinSpin {
-    0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
-    100% { transform: translateY(-80px) rotate(360deg) scale(0.5); opacity: 0; }
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
-
-/* Адаптивность */
-@media (max-width: 500px) {
-    .super-pet {
-        width: 240px;
-        height: 240px;
-    }
-    
-    .action-btn span {
-        font-size: 10px;
-    }
-}
+    <script src="script.js"></script>
+</body>
+</html>
