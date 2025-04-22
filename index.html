@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌟 Super Dog — Виртуальный питомец</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
@@ -34,6 +35,7 @@
                     <div class="speech-bubble" id="speech-bubble"></div>
                     <img src="images/dog_super.png" alt="Супер пёсик" id="super-pet" class="super-pet">
                     <div class="mood-light" id="mood-light"></div>
+                    <div class="pet-clothes" id="pet-clothes"></div>
                 </div>
 
                 <!-- Статус бары -->
@@ -57,11 +59,11 @@
             <nav class="action-panel">
                 <button class="action-btn" id="feed-btn">
                     <img src="images/btn_food.png" alt="Кормить">
-                    <span>Кормить</span>
+                    <span>Кормить (<span id="food-count">5</span>)</span>
                 </button>
                 <button class="action-btn" id="play-btn">
                     <img src="images/btn_game.png" alt="Играть">
-                    <span>Играть</span>
+                    <span>Играть (<span id="toy-count">2</span>)</span>
                 </button>
                 <button class="action-btn" id="care-btn">
                     <img src="images/btn_care.png" alt="Уход">
@@ -79,6 +81,83 @@
 
         <!-- Уведомления -->
         <div class="super-notification" id="notification"></div>
+
+        <!-- Модальные окна -->
+        <div class="modal-overlay" id="modal-overlay"></div>
+        
+        <!-- Магазин -->
+        <div class="modal" id="shop-modal">
+            <div class="modal-header">
+                <h3>🐶 Магазин</h3>
+                <button class="close-modal" id="close-shop">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="shop-tabs">
+                    <button class="tab-btn active" data-tab="food">Еда</button>
+                    <button class="tab-btn" data-tab="toys">Игрушки</button>
+                    <button class="tab-btn" data-tab="clothes">Одежда</button>
+                </div>
+                
+                <div class="shop-items" id="food-items">
+                    <!-- Товары будут добавлены через JS -->
+                </div>
+                
+                <div class="shop-items hidden" id="toys-items">
+                    <!-- Товары будут добавлены через JS -->
+                </div>
+                
+                <div class="shop-items hidden" id="clothes-items">
+                    <!-- Товары будут добавлены через JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Инвентарь -->
+        <div class="modal" id="inventory-modal">
+            <div class="modal-header">
+                <h3>🎒 Инвентарь</h3>
+                <button class="close-modal" id="close-inventory">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="inventory-tabs">
+                    <button class="tab-btn active" data-tab="inv-food">Еда</button>
+                    <button class="tab-btn" data-tab="inv-toys">Игрушки</button>
+                    <button class="tab-btn" data-tab="inv-clothes">Одежда</button>
+                </div>
+                
+                <div class="inventory-items" id="inv-food-items">
+                    <!-- Предметы будут добавлены через JS -->
+                </div>
+                
+                <div class="inventory-items hidden" id="inv-toys-items">
+                    <!-- Предметы будут добавлены через JS -->
+                </div>
+                
+                <div class="inventory-items hidden" id="inv-clothes-items">
+                    <!-- Предметы будут добавлены через JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Достижения -->
+        <div class="modal" id="achievements-modal">
+            <div class="modal-header">
+                <h3>🏆 Достижения</h3>
+                <button class="close-modal" id="close-achievements">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="achievements-grid" id="achievements-list">
+                    <!-- Достижения будут добавлены через JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Аудио элементы -->
+        <audio id="sound-click" src="sounds/click.wav" preload="auto"></audio>
+        <audio id="sound-coin" src="sounds/coin.wav" preload="auto"></audio>
+        <audio id="sound-bark" src="sounds/bark.wav" preload="auto"></audio>
+        <audio id="sound-eat" src="sounds/eat.wav" preload="auto"></audio>
+        <audio id="sound-levelup" src="sounds/levelup.wav" preload="auto"></audio>
     </div>
 
     <script src="script.js"></script>
