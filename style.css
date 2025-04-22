@@ -1,1167 +1,548 @@
-// Конфигурация игры
-const CONFIG = {
-    PRICES: {
-        FOOD: {
-            BONE: 20,
-            MEAT: 50,
-            FISH: 80,
-            CAKE: 150
-        },
-        TOYS: {
-            BALL: 50,
-            ROPE: 80,
-            PLUSH: 120,
-            FRISBEE: 200
-        },
-        CLOTHES: {
-            HAT: 100,
-            GLASSES: 150,
-            SCARF: 200,
-            COSTUME: 300
-        }
-    },
-    XP: {
-        PER_ACTION: 10,
-        TO_LEVEL: 100,
-        LEVEL_MULTIPLIER: 1.2
-    },
-    STATES: {
-        HAPPY: 'happy',
-        HUNGRY: 'hungry',
-        TIRED: 'tired',
-        SAD: 'sad'
-    },
-    DECAY_RATES: {
-        HUNGER: 0.5,
-        HAPPINESS: 0.3,
-        ENERGY: 0.2
-    },
-    ACHIEVEMENTS: {
-        FIRST_STEPS: {
-            name: "Первые шаги",
-            desc: "Завести питомца",
-            icon: "🥇",
-            condition: (game) => game.stats.happiness > 0,
-            reward: 100
-        },
-        FOOD_LOVER: {
-            name: "Гурман",
-            desc: "Накормить питомца 10 раз",
-            icon: "🍗",
-            condition: (game) => game.achievements.feedCount >= 10,
-            reward: 200
-        },
-        PLAYER: {
-            name: "Игрок",
-            desc: "Поиграть с питомцем 10 раз",
-            icon: "🎾",
-            condition: (game) => game.achievements.playCount >= 10,
-            reward: 200
-        },
-        RICH: {
-            name: "Богач",
-            desc: "Заработать 1000 монет",
-            icon: "💰",
-            condition: (game) => game.coins >= 1000,
-            reward: 500
-        },
-        VETERAN: {
-            name: "Ветеран",
-            desc: "Достичь 5 уровня",
-            icon: "🏅",
-            condition: (game) => game.level >= 5,
-            reward: 300
-        }
+/* Базовые стили */
+:root {
+    --primary: #FF6B6B;
+    --secondary: #4ECDC4;
+    --accent: #FFE66D;
+    --dark: #292F36;
+    --light: #F7FFF7;
+    --success: #6BCB77;
+    --warning: #FFD166;
+    --danger: #EF476F;
+    --glass: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* Сброс и базовые настройки */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: 'Rubik', sans-serif;
+    color: var(--dark);
+    background-color: #f5f5f5;
+    overflow: hidden;
+    height: 100vh;
+}
+
+.app-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Анимированный фон */
+.background-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    animation: float 15s infinite linear;
+}
+
+.particle:nth-child(1) {
+    width: 150px;
+    height: 150px;
+    top: 20%;
+    left: 10%;
+    animation-duration: 20s;
+}
+
+.particle:nth-child(2) {
+    width: 200px;
+    height: 200px;
+    top: 60%;
+    left: 70%;
+    animation-duration: 25s;
+}
+
+.particle:nth-child(3) {
+    width: 100px;
+    height: 100px;
+    top: 80%;
+    left: 30%;
+    animation-duration: 15s;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
     }
-};
-
-// Товары в магазине
-const SHOP_ITEMS = {
-    FOOD: [
-        { id: 'bone', name: 'Кость', price: CONFIG.PRICES.FOOD.BONE, img: 'images/food_bone.png', effect: 20 },
-        { id: 'meat', name: 'Мясо', price: CONFIG.PRICES.FOOD.MEAT, img: 'images/food_meat.png', effect: 40 },
-        { id: 'fish', name: 'Рыба', price: CONFIG.PRICES.FOOD.FISH, img: 'images/food_fish.png', effect: 60 },
-        { id: 'cake', name: 'Торт', price: CONFIG.PRICES.FOOD.CAKE, img: 'images/food_cake.png', effect: 100 }
-    ],
-    TOYS: [
-        { id: 'ball', name: 'Мячик', price: CONFIG.PRICES.TOYS.BALL, img: 'images/toy_ball.png', effect: 30 },
-        { id: 'rope', name: 'Веревка', price: CONFIG.PRICES.TOYS.ROPE, img: 'images/toy_rope.png', effect: 50 },
-        { id: 'plush', name: 'Плюшка', price: CONFIG.PRICES.TOYS.PLUSH, img: 'images/toy_plush.png', effect: 70 },
-        { id: 'frisbee', name: 'Фрисби', price: CONFIG.PRICES.TOYS.FRISBEE, img: 'images/toy_frisbee.png', effect: 100 }
-    ],
-    CLOTHES: [
-        { id: 'hat', name: 'Шляпа', price: CONFIG.PRICES.CLOTHES.HAT, img: 'images/clothes_hat.png', imgWear: 'images/clothes_hat_wear.png' },
-        { id: 'glasses', name: 'Очки', price: CONFIG.PRICES.CLOTHES.GLASSES, img: 'images/clothes_glasses.png', imgWear: 'images/clothes_glasses_wear.png' },
-        { id: 'scarf', name: 'Шарф', price: CONFIG.PRICES.CLOTHES.SCARF, img: 'images/clothes_scarf.png', imgWear: 'images/clothes_scarf_wear.png' },
-        { id: 'costume', name: 'Костюм', price: CONFIG.PRICES.CLOTHES.COSTUME, img: 'images/clothes_costume.png', imgWear: 'images/clothes_costume_wear.png' }
-    ]
-};
-
-// Состояние игры
-const game = {
-    stats: {
-        hunger: 80,
-        happiness: 90,
-        energy: 100
-    },
-    coins: 500,
-    xp: 0,
-    level: 1,
-    state: CONFIG.STATES.HAPPY,
-    lastAction: Date.now(),
-    inventory: {
-        food: {
-            bone: 5,
-            meat: 0,
-            fish: 0,
-            cake: 0
-        },
-        toys: {
-            ball: 2,
-            rope: 0,
-            plush: 0,
-            frisbee: 0
-        },
-        clothes: {
-            hat: false,
-            glasses: false,
-            scarf: false,
-            costume: false
-        }
-    },
-    wearing: {
-        hat: false,
-        glasses: false,
-        scarf: false,
-        costume: false
-    },
-    achievements: {
-        unlocked: {},
-        feedCount: 0,
-        playCount: 0,
-        careCount: 0
-    },
-    settings: {
-        sound: true,
-        notifications: true
-    }
-};
-
-// DOM элементы
-const DOM = {
-    // Основные элементы
-    pet: document.getElementById('super-pet'),
-    hungerBar: document.getElementById('hunger-bar'),
-    happinessBar: document.getElementById('happiness-bar'),
-    energyBar: document.getElementById('energy-bar'),
-    coinsDisplay: document.getElementById('coins'),
-    xpProgress: document.getElementById('xp-progress'),
-    levelDisplay: document.getElementById('level'),
-    speechBubble: document.getElementById('speech-bubble'),
-    moodLight: document.getElementById('mood-light'),
-    petClothes: document.getElementById('pet-clothes'),
-    notification: document.getElementById('notification'),
-    effectsLayer: document.getElementById('effects-layer'),
-    
-    // Кнопки действий
-    feedBtn: document.getElementById('feed-btn'),
-    playBtn: document.getElementById('play-btn'),
-    careBtn: document.getElementById('care-btn'),
-    shopBtn: document.getElementById('shop-btn'),
-    
-    // Счетчики инвентаря
-    foodCount: document.getElementById('food-count'),
-    toyCount: document.getElementById('toy-count'),
-    
-    // Модальные окна
-    modalOverlay: document.getElementById('modal-overlay'),
-    shopModal: document.getElementById('shop-modal'),
-    inventoryModal: document.getElementById('inventory-modal'),
-    achievementsModal: document.getElementById('achievements-modal'),
-    
-    // Кнопки закрытия модалок
-    closeShop: document.getElementById('close-shop'),
-    closeInventory: document.getElementById('close-inventory'),
-    closeAchievements: document.getElementById('close-achievements'),
-    
-    // Вкладки магазина
-    shopTabs: document.querySelectorAll('.shop-tabs .tab-btn'),
-    foodItems: document.getElementById('food-items'),
-    toysItems: document.getElementById('toys-items'),
-    clothesItems: document.getElementById('clothes-items'),
-    
-    // Вкладки инвентаря
-    inventoryTabs: document.querySelectorAll('.inventory-tabs .tab-btn'),
-    invFoodItems: document.getElementById('inv-food-items'),
-    invToysItems: document.getElementById('inv-toys-items'),
-    invClothesItems: document.getElementById('inv-clothes-items'),
-    
-    // Достижения
-    achievementsList: document.getElementById('achievements-list'),
-    
-    // Аудио элементы
-    soundClick: document.getElementById('sound-click'),
-    soundCoin: document.getElementById('sound-coin'),
-    soundBark: document.getElementById('sound-bark'),
-    soundEat: document.getElementById('sound-eat'),
-    soundLevelup: document.getElementById('sound-levelup')
-};
-
-// Фразы питомца
-const PHRASES = {
-    HAPPY: [
-        "Я так тебя люблю!",
-        "Ты лучший хозяин!",
-        "Давай поиграем?",
-        "Гав-гав!",
-        "Почеши мне животик!",
-        "Я счастлив!",
-        "Ты мой лучший друг!",
-        "Жизнь прекрасна!",
-        "Я готов к приключениям!",
-        "Спасибо, что ты есть!"
-    ],
-    HUNGRY: [
-        "Я голодный!",
-        "Хочу вкусняшку!",
-        "Покорми меня!",
-        "Где моя еда?",
-        "🍗🍗🍗",
-        "Я бы не отказался от перекуса",
-        "Мой животик урчит...",
-        "Когда обед?",
-        "Я могу съесть слона!",
-        "Хочу есть!"
-    ],
-    SAD: [
-        "Мне грустно...",
-        "Ты меня не любишь?",
-        "Почему ты меня игнорируешь?",
-        "Я скучаю...",
-        "😢😢😢",
-        "Мне одиноко...",
-        "Ты забыл обо мне?",
-        "Я чувствую себя брошенным",
-        "Никто меня не любит...",
-        "Мне нужно внимание"
-    ],
-    TIRED: [
-        "Я устал...",
-        "Хочу спать",
-        "Давай отдохнем",
-        "Мне нужно вздремнуть",
-        "😴😴😴",
-        "Глазки слипаются...",
-        "Я еле стою на лапах",
-        "Мне бы поспать",
-        "Так устал...",
-        "Пойду полежу"
-    ]
-};
-
-// Инициализация Telegram WebApp
-function initTelegramApp() {
-    try {
-        Telegram.WebApp.ready();
-        Telegram.WebApp.expand();
-        Telegram.WebApp.enableClosingConfirmation();
-        
-        // Проверяем, есть ли сохраненные данные
-        if (Telegram.WebApp.initDataUnsafe.user) {
-            const savedData = Telegram.WebApp.CloudStorage.getItem('pet_game_data');
-            if (savedData) {
-                loadGame(JSON.parse(savedData));
-            }
-        }
-        
-        // Настройка кнопки меню
-        Telegram.WebApp.MainButton.setText('Меню');
-        Telegram.WebApp.MainButton.onClick(showMainMenu);
-        Telegram.WebApp.MainButton.show();
-    } catch (e) {
-        console.error('Telegram WebApp error:', e);
+    100% {
+        transform: translateY(-100vh) rotate(360deg);
+        opacity: 0;
     }
 }
 
-// Главное меню
-function showMainMenu() {
-    playSound('click');
-    
-    const menuItems = [
-        { text: '🎒 Инвентарь', callback: showInventory },
-        { text: '🏆 Достижения', callback: showAchievements },
-        { text: '⚙️ Настройки', callback: showSettings },
-        { text: '❌ Закрыть', callback: () => Telegram.WebApp.MainButton.hide() }
-    ];
-    
-    Telegram.WebApp.showPopup({
-        title: 'Меню',
-        message: 'Выберите действие',
-        buttons: menuItems.map(item => ({
-            id: item.text,
-            type: 'default',
-            text: item.text
-        }))
-    }, (buttonId) => {
-        const selectedItem = menuItems.find(item => item.text === buttonId);
-        if (selectedItem) selectedItem.callback();
-    });
+/* Основной контейнер игры */
+.game-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 16px;
+    max-width: 500px;
+    margin: 0 auto;
+    position: relative;
 }
 
-// Настройки
-function showSettings() {
-    const settingsItems = [
-        { 
-            text: game.settings.sound ? '🔊 Звук: Вкл' : '🔇 Звук: Выкл', 
-            callback: () => {
-                game.settings.sound = !game.settings.sound;
-                showSettings();
-            } 
-        },
-        { 
-            text: game.settings.notifications ? '🔔 Уведомления: Вкл' : '🔕 Уведомления: Выкл', 
-            callback: () => {
-                game.settings.notifications = !game.settings.notifications;
-                showSettings();
-            } 
-        },
-        { text: '❌ Закрыть', callback: () => Telegram.WebApp.close() }
-    ];
-    
-    Telegram.WebApp.showPopup({
-        title: 'Настройки',
-        message: 'Настройте приложение',
-        buttons: settingsItems.map(item => ({
-            id: item.text,
-            type: 'default',
-            text: item.text
-        }))
-    }, (buttonId) => {
-        const selectedItem = settingsItems.find(item => item.text === buttonId);
-        if (selectedItem) selectedItem.callback();
-    });
+/* Статус бар */
+.status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px 16px;
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-sm);
 }
 
-// Сохранение игры
-function saveGame() {
-    try {
-        if (Telegram.WebApp.initDataUnsafe.user) {
-            Telegram.WebApp.CloudStorage.setItem('pet_game_data', JSON.stringify(game));
-        } else {
-            localStorage.setItem('pet_game_data', JSON.stringify(game));
-        }
-    } catch (e) {
-        console.error('Save error:', e);
-    }
+.level-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-// Загрузка игры
-function loadGame(savedData) {
-    if (savedData) {
-        Object.assign(game, savedData);
-        
-        // Обновляем одежду питомца
-        updatePetClothes();
-        
-        // Обновляем UI
-        updateUI();
-    }
+.level-icon {
+    font-size: 18px;
+    color: var(--accent);
 }
 
-// Воспроизведение звука
-function playSound(soundName) {
-    if (!game.settings.sound) return;
-    
-    try {
-        const sound = DOM[`sound${soundName.charAt(0).toUpperCase() + soundName.slice(1)}`];
-        if (sound) {
-            sound.currentTime = 0;
-            sound.play().catch(e => console.error('Sound play error:', e));
-        }
-    } catch (e) {
-        console.error('Sound error:', e);
-    }
+.xp-bar {
+    width: 80px;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
 }
 
-// Обновление интерфейса
-function updateUI() {
-    // Статистика
-    DOM.hungerBar.style.width = `${game.stats.hunger}%`;
-    DOM.happinessBar.style.width = `${game.stats.happiness}%`;
-    DOM.energyBar.style.width = `${game.stats.energy}%`;
-    DOM.coinsDisplay.textContent = game.coins;
-    
-    // Опыт и уровень
-    const xpNeeded = CONFIG.XP.TO_LEVEL * Math.pow(CONFIG.XP.LEVEL_MULTIPLIER, game.level - 1);
-    DOM.xpProgress.style.width = `${(game.xp / xpNeeded) * 100}%`;
-    DOM.levelDisplay.textContent = game.level;
-    
-    // Инвентарь
-    const foodTotal = Object.values(game.inventory.food).reduce((a, b) => a + b, 0);
-    const toysTotal = Object.values(game.inventory.toys).reduce((a, b) => a + b, 0);
-    DOM.foodCount.textContent = foodTotal;
-    DOM.toyCount.textContent = toysTotal;
-    
-    // Состояние питомца
-    updatePetState();
-    
-    // Сохраняем игру
-    saveGame();
-    
-    // Проверяем достижения
-    checkAchievements();
+.xp-progress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #FFB347);
+    border-radius: 3px;
+    transition: width 0.5s ease;
 }
 
-// Обновление состояния питомца
-function updatePetState() {
-    const prevState = game.state;
-    
-    if (game.stats.hunger < 30 || game.stats.happiness < 30) {
-        game.state = CONFIG.STATES.SAD;
-    } else if (game.stats.hunger < 60) {
-        game.state = CONFIG.STATES.HUNGRY;
-    } else if (game.stats.energy < 30) {
-        game.state = CONFIG.STATES.TIRED;
-    } else {
-        game.state = CONFIG.STATES.HAPPY;
-    }
-    
-    // Если состояние изменилось, показываем фразу
-    if (prevState !== game.state) {
-        showRandomPhrase();
-    }
-    
-    // Обновление внешнего вида
-    updatePetAppearance();
+.coins-container {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    color: var(--light);
 }
 
-// Обновление внешнего вида питомца
-function updatePetAppearance() {
-    // Изменение цвета подсветки
-    let lightColor, lightOpacity;
-    
-    switch(game.state) {
-        case CONFIG.STATES.HAPPY:
-            lightColor = 'rgba(120, 115, 245, 0.3)';
-            lightOpacity = 0.8;
-            break;
-        case CONFIG.STATES.HUNGRY:
-            lightColor = 'rgba(255, 110, 199, 0.3)';
-            lightOpacity = 0.6;
-            break;
-        case CONFIG.STATES.SAD:
-            lightColor = 'rgba(255, 110, 199, 0.2)';
-            lightOpacity = 0.4;
-            break;
-        case CONFIG.STATES.TIRED:
-            lightColor = 'rgba(255, 200, 69, 0.3)';
-            lightOpacity = 0.5;
-            break;
-    }
-    
-    DOM.moodLight.style.background = `radial-gradient(circle, ${lightColor} 0%, rgba(255,255,255,0) 70%)`;
-    DOM.moodLight.style.opacity = lightOpacity;
-    
-    // Микровзаимодействия
-    if (game.state === CONFIG.STATES.HAPPY) {
-        DOM.pet.classList.add('animate__animated', 'animate__pulse');
-        setTimeout(() => {
-            DOM.pet.classList.remove('animate__animated', 'animate__pulse');
-        }, 1000);
-    }
+.coin-icon {
+    width: 20px;
+    height: 20px;
 }
 
-// Обновление одежды питомца
-function updatePetClothes() {
-    let clothesHTML = '';
-    
-    for (const [item, isWearing] of Object.entries(game.wearing)) {
-        if (isWearing) {
-            const clothesItem = SHOP_ITEMS.CLOTHES.find(c => c.id === item);
-            if (clothesItem) {
-                clothesHTML += `<img src="${clothesItem.imgWear}" class="clothes-item" data-item="${item}" style="position:absolute;top:0;left:0;width:100%;height:100%;">`;
-            }
-        }
-    }
-    
-    DOM.petClothes.innerHTML = clothesHTML;
+/* Область питомца */
+.pet-container {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-// Показать речь
-function showSpeech(text) {
-    if (!game.settings.notifications) return;
-    
-    DOM.speechBubble.textContent = text;
-    DOM.speechBubble.style.opacity = '1';
-    DOM.speechBubble.style.top = '20%';
-    
-    setTimeout(() => {
-        DOM.speechBubble.style.opacity = '0';
-    }, 2000);
+.pet-animation {
+    position: relative;
+    width: 250px;
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-// Показать уведомление
-function showNotification(text, type = 'info') {
-    if (!game.settings.notifications) return;
-    
-    DOM.notification.textContent = text;
-    DOM.notification.style.opacity = '1';
-    
-    // Цвет в зависимости от типа
-    switch(type) {
-        case 'success':
-            DOM.notification.style.background = 'var(--success)';
-            break;
-        case 'warning':
-            DOM.notification.style.background = 'var(--warning)';
-            break;
-        case 'error':
-            DOM.notification.style.background = 'var(--danger)';
-            break;
-        default:
-            DOM.notification.style.background = 'var(--primary)';
-    }
-    
-    setTimeout(() => {
-        DOM.notification.style.opacity = '0';
-    }, 2000);
+.pet {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
+    transition: all 0.3s ease;
+    z-index: 2;
 }
 
-// Добавить опыт
-function addXP(amount) {
-    const xpNeeded = CONFIG.XP.TO_LEVEL * Math.pow(CONFIG.XP.LEVEL_MULTIPLIER, game.level - 1);
-    game.xp += amount;
-    
-    if (game.xp >= xpNeeded) {
-        game.level++;
-        game.xp = game.xp - xpNeeded;
-        showNotification(`🎉 Уровень ${game.level}!`, 'success');
-        playSound('levelup');
-        
-        // Эффект звезд
-        createStars(10);
-    }
-    
-    updateUI();
+.pet-clothes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    z-index: 3;
+    pointer-events: none;
 }
 
-// Добавить монеты
-function addCoins(amount) {
-    game.coins += amount;
-    showNotification(`+${amount} монет`, 'success');
-    playSound('coin');
-    updateUI();
+.mood-indicator {
+    position: absolute;
+    bottom: 0;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+    border-radius: 50%;
+    z-index: 1;
+    opacity: 0.7;
+    transition: all 0.5s ease;
 }
 
-// Создать эффект сердечек
-function createHearts(count = 5) {
-    for (let i = 0; i < count; i++) {
-        setTimeout(() => {
-            const heart = document.createElement('div');
-            heart.className = 'heart-effect';
-            heart.innerHTML = '❤️';
-            heart.style.left = `${40 + Math.random() * 20}%`;
-            heart.style.fontSize = `${24 + Math.random() * 12}px`;
-            heart.style.animationDuration = `${2 + Math.random()}s`;
-            DOM.effectsLayer.appendChild(heart);
-            
-            setTimeout(() => heart.remove(), 3000);
-        }, i * 200);
-    }
+/* Речевое облачко */
+.speech-bubble {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--light);
+    color: var(--dark);
+    padding: 10px 16px;
+    border-radius: 16px;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 4;
+    box-shadow: var(--shadow-sm);
+    max-width: 80%;
+    text-align: center;
+    word-break: break-word;
 }
 
-// Создать эффект монет
-function createCoins(count = 3) {
-    for (let i = 0; i < count; i++) {
-        setTimeout(() => {
-            const coin = document.createElement('div');
-            coin.className = 'coin-effect';
-            coin.style.left = `${40 + Math.random() * 20}%`;
-            coin.style.animationDuration = `${1.5 + Math.random()}s`;
-            DOM.effectsLayer.appendChild(coin);
-            
-            setTimeout(() => coin.remove(), 2000);
-        }, i * 300);
-    }
+.speech-bubble:after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 10px 10px 0;
+    border-style: solid;
+    border-color: var(--light) transparent;
 }
 
-// Создать эффект звезд
-function createStars(count = 5) {
-    for (let i = 0; i < count; i++) {
-        setTimeout(() => {
-            const star = document.createElement('div');
-            star.className = 'star-effect';
-            star.innerHTML = '⭐';
-            star.style.left = `${40 + Math.random() * 20}%`;
-            star.style.fontSize = `${24 + Math.random() * 12}px`;
-            star.style.animationDuration = `${2 + Math.random()}s`;
-            DOM.effectsLayer.appendChild(star);
-            
-            setTimeout(() => star.remove(), 3000);
-        }, i * 200);
-    }
+/* Индикаторы состояний */
+.stats-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 16px;
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 16px;
 }
 
-// Показать случайную фразу
-function showRandomPhrase() {
-    if (game.state === CONFIG.STATES.HAPPY) {
-        const phrase = PHRASES.HAPPY[Math.floor(Math.random() * PHRASES.HAPPY.length)];
-        showSpeech(phrase);
-    } else if (game.state === CONFIG.STATES.HUNGRY) {
-        const phrase = PHRASES.HUNGRY[Math.floor(Math.random() * PHRASES.HUNGRY.length)];
-        showSpeech(phrase);
-    } else if (game.state === CONFIG.STATES.SAD) {
-        const phrase = PHRASES.SAD[Math.floor(Math.random() * PHRASES.SAD.length)];
-        showSpeech(phrase);
-    } else if (game.state === CONFIG.STATES.TIRED) {
-        const phrase = PHRASES.TIRED[Math.floor(Math.random() * PHRASES.TIRED.length)];
-        showSpeech(phrase);
-    }
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-// Кормление
-function feed() {
-    playSound('click');
-    
-    if (game.stats.hunger >= 100) {
-        showSpeech("Я не голоден!");
-        return;
-    }
-    
-    const foodTotal = Object.values(game.inventory.food).reduce((a, b) => a + b, 0);
-    if (foodTotal <= 0) {
-        showNotification("Нет еды! Купите в магазине", 'warning');
-        return;
-    }
-    
-    // Показываем меню выбора еды
-    const foodItems = Object.entries(game.inventory.food)
-        .filter(([_, count]) => count > 0)
-        .map(([foodId, _]) => {
-            const foodItem = SHOP_ITEMS.FOOD.find(item => item.id === foodId);
-            return {
-                text: `${foodItem.name} (${game.inventory.food[foodId]})`,
-                callback: () => useFoodItem(foodId)
-            };
-        });
-    
-    if (foodItems.length === 0) return;
-    
-    Telegram.WebApp.showPopup({
-        title: 'Выберите еду',
-        message: 'Какой едой покормить питомца?',
-        buttons: foodItems.map((item, index) => ({
-            id: `food_${index}`,
-            type: 'default',
-            text: item.text
-        }))
-    }, (buttonId) => {
-        const index = parseInt(buttonId.split('_')[1]);
-        if (!isNaN(index) && foodItems[index]) {
-            foodItems[index].callback();
-        }
-    });
+.stat-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
 }
 
-// Использовать предмет еды
-function useFoodItem(foodId) {
-    if (game.inventory.food[foodId] <= 0) return;
-    
-    game.inventory.food[foodId]--;
-    const foodItem = SHOP_ITEMS.FOOD.find(item => item.id === foodId);
-    
-    game.stats.hunger = Math.min(100, game.stats.hunger + foodItem.effect);
-    game.stats.happiness = Math.min(100, game.stats.happiness + foodItem.effect / 2);
-    game.lastAction = Date.now();
-    
-    // Анимации
-    createHearts(8);
-    playSound('eat');
-    addXP(CONFIG.XP.PER_ACTION);
-    game.achievements.feedCount++;
-    
-    // Временное изменение изображения
-    const originalSrc = DOM.pet.src;
-    DOM.pet.src = 'images/dog_eating.png';
-    
-    setTimeout(() => {
-        DOM.pet.src = originalSrc;
-        showSpeech("Вкусно! Спасибо!");
-        updateUI();
-    }, 1500);
+.stat-bar {
+    flex: 1;
+    height: 10px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
 }
 
-// Игра
-function play() {
-    playSound('click');
-    
-    if (game.stats.energy < 20) {
-        showSpeech("Я устал...");
-        return;
-    }
-    
-    const toysTotal = Object.values(game.inventory.toys).reduce((a, b) => a + b, 0);
-    if (toysTotal <= 0) {
-        showNotification("Нет игрушек! Купите в магазине", 'warning');
-        return;
-    }
-    
-    // Показываем меню выбора игрушки
-    const toyItems = Object.entries(game.inventory.toys)
-        .filter(([_, count]) => count > 0)
-        .map(([toyId, _]) => {
-            const toyItem = SHOP_ITEMS.TOYS.find(item => item.id === toyId);
-            return {
-                text: `${toyItem.name} (${game.inventory.toys[toyId]})`,
-                callback: () => useToyItem(toyId)
-            };
-        });
-    
-    if (toyItems.length === 0) return;
-    
-    Telegram.WebApp.showPopup({
-        title: 'Выберите игрушку',
-        message: 'С чем поиграть?',
-        buttons: toyItems.map((item, index) => ({
-            id: `toy_${index}`,
-            type: 'default',
-            text: item.text
-        }))
-    }, (buttonId) => {
-        const index = parseInt(buttonId.split('_')[1]);
-        if (!isNaN(index) && toyItems[index]) {
-            toyItems[index].callback();
-        }
-    });
+.stat-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.5s ease;
 }
 
-// Использовать игрушку
-function useToyItem(toyId) {
-    if (game.inventory.toys[toyId] <= 0) return;
-    
-    const toyItem = SHOP_ITEMS.TOYS.find(item => item.id === toyId);
-    
-    game.stats.happiness = Math.min(100, game.stats.happiness + toyItem.effect);
-    game.stats.energy = Math.max(0, game.stats.energy - 20);
-    game.stats.hunger = Math.max(0, game.stats.hunger - 10);
-    game.lastAction = Date.now();
-    
-    // Анимации
-    createHearts(10);
-    playSound('bark');
-    addXP(CONFIG.XP.PER_ACTION);
-    game.achievements.playCount++;
-    
-    // Временное изменение изображения
-    const originalSrc = DOM.pet.src;
-    DOM.pet.src = 'images/dog_playing.png';
-    
-    setTimeout(() => {
-        DOM.pet.src = originalSrc;
-        showSpeech("Это было весело!");
-        updateUI();
-    }, 2000);
+.hunger {
+    background: linear-gradient(90deg, #FF6B6B, #FF8E8E);
 }
 
-// Уход
-function care() {
-    playSound('click');
-    
-    if (game.stats.energy >= 90) {
-        showSpeech("Я не хочу спать!");
-        return;
-    }
-    
-    game.stats.energy = 100;
-    game.stats.happiness = Math.min(100, game.stats.happiness + 15);
-    game.stats.hunger = Math.max(0, game.stats.hunger - 10);
-    game.lastAction = Date.now();
-    
-    // Анимации
-    addXP(CONFIG.XP.PER_ACTION * 2);
-    game.achievements.careCount++;
-    
-    // Временное изменение изображения
-    const originalSrc = DOM.pet.src;
-    DOM.pet.src = 'images/dog_sleeping.png';
-    
-    setTimeout(() => {
-        DOM.pet.src = originalSrc;
-        showSpeech("Я выспался!");
-        updateUI();
-    }, 3000);
+.happiness {
+    background: linear-gradient(90deg, #4ECDC4, #7DE2D1);
 }
 
-// Показать магазин
-function showShop() {
-    playSound('click');
-    DOM.modalOverlay.classList.add('active');
-    DOM.shopModal.classList.add('active');
-    
-    // Заполняем товары
-    fillShopItems();
+.energy {
+    background: linear-gradient(90deg, #FFE66D, #FFB347);
 }
 
-// Заполнить товары в магазине
-function fillShopItems() {
-    // Еда
-    DOM.foodItems.innerHTML = SHOP_ITEMS.FOOD.map(item => `
-        <div class="shop-item" data-id="${item.id}">
-            <img src="${item.img}" class="shop-item-img">
-            <div class="shop-item-name">${item.name}</div>
-            <div class="shop-item-price">
-                <img src="images/coin.png"> ${item.price}
-            </div>
-            <button class="buy-btn" data-item="${item.id}" data-type="food">
-                Купить
-            </button>
-        </div>
-    `).join('');
-    
-    // Игрушки
-    DOM.toysItems.innerHTML = SHOP_ITEMS.TOYS.map(item => `
-        <div class="shop-item" data-id="${item.id}">
-            <img src="${item.img}" class="shop-item-img">
-            <div class="shop-item-name">${item.name}</div>
-            <div class="shop-item-price">
-                <img src="images/coin.png"> ${item.price}
-            </div>
-            <button class="buy-btn" data-item="${item.id}" data-type="toys">
-                Купить
-            </button>
-        </div>
-    `).join('');
-    
-    // Одежда
-    DOM.clothesItems.innerHTML = SHOP_ITEMS.CLOTHES.map(item => `
-        <div class="shop-item" data-id="${item.id}">
-            <img src="${item.img}" class="shop-item-img">
-            <div class="shop-item-name">${item.name}</div>
-            <div class="shop-item-price">
-                <img src="images/coin.png"> ${item.price}
-            </div>
-            <button class="buy-btn" data-item="${item.id}" data-type="clothes">
-                ${game.inventory.clothes[item.id] ? 'Куплено' : 'Купить'}
-            </button>
-        </div>
-    `).join('');
-    
-    // Обработчики кнопок покупки
-    document.querySelectorAll('.buy-btn').forEach(btn => {
-        btn.addEventListener('click', () => buyItem(
-            btn.dataset.item, 
-            btn.dataset.type
-        ));
-    });
+/* Панель действий */
+.actions-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 8px 0;
 }
 
-// Показать инвентарь
-function showInventory() {
-    playSound('click');
-    DOM.modalOverlay.classList.add('active');
-    DOM.inventoryModal.classList.add('active');
-    
-    // Заполняем инвентарь
-    fillInventoryItems();
+.action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 10px 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--light);
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    border: none;
 }
 
-// Заполнить предметы в инвентаре
-function fillInventoryItems() {
-    // Еда
-    DOM.invFoodItems.innerHTML = SHOP_ITEMS.FOOD.map(item => {
-        const count = game.inventory.food[item.id];
-        return `
-            <div class="inventory-item" data-id="${item.id}">
-                <img src="${item.img}" class="inventory-item-img">
-                <div class="inventory-item-name">${item.name}</div>
-                <div class="inventory-item-count">${count} шт.</div>
-                <button class="use-btn" data-item="${item.id}" data-type="food" ${count <= 0 ? 'disabled' : ''}>
-                    Использовать
-                </button>
-            </div>
-        `;
-    }).join('');
-    
-    // Игрушки
-    DOM.invToysItems.innerHTML = SHOP_ITEMS.TOYS.map(item => {
-        const count = game.inventory.toys[item.id];
-        return `
-            <div class="inventory-item" data-id="${item.id}">
-                <img src="${item.img}" class="inventory-item-img">
-                <div class="inventory-item-name">${item.name}</div>
-                <div class="inventory-item-count">${count} шт.</div>
-                <button class="use-btn" data-item="${item.id}" data-type="toys" ${count <= 0 ? 'disabled' : ''}>
-                    Использовать
-                </button>
-            </div>
-        `;
-    }).join('');
-    
-    // Одежда
-    DOM.invClothesItems.innerHTML = SHOP_ITEMS.CLOTHES.map(item => {
-        const hasItem = game.inventory.clothes[item.id];
-        const isWearing = game.wearing[item.id];
-        
-        return `
-            <div class="inventory-item" data-id="${item.id}">
-                <img src="${item.img}" class="inventory-item-img">
-                <div class="inventory-item-name">${item.name}</div>
-                <div class="inventory-item-count">${hasItem ? 'Есть' : 'Нет'}</div>
-                <button class="use-btn" data-item="${item.id}" data-type="clothes" ${!hasItem ? 'disabled' : ''}>
-                    ${isWearing ? 'Снять' : 'Надеть'}
-                </button>
-            </div>
-        `;
-    }).join('');
-    
-    // Обработчики кнопок использования
-    document.querySelectorAll('.use-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const itemType = btn.dataset.type;
-            const itemId = btn.dataset.item;
-            
-            if (itemType === 'food') {
-                useFoodItem(itemId);
-                closeModal();
-            } else if (itemType === 'toys') {
-                useToyItem(itemId);
-                closeModal();
-            } else if (itemType === 'clothes') {
-                toggleClothes(itemId);
-                fillInventoryItems(); // Обновляем инвентарь
-            }
-        });
-    });
+.action-btn:hover {
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: var(--shadow-md);
 }
 
-// Показать достижения
-function showAchievements() {
-    playSound('click');
-    DOM.modalOverlay.classList.add('active');
-    DOM.achievementsModal.classList.add('active');
-    
-    // Заполняем достижения
-    fillAchievements();
+.action-btn:active {
+    transform: translateY(0);
 }
 
-// Заполнить список достижений
-function fillAchievements() {
-    DOM.achievementsList.innerHTML = Object.entries(CONFIG.ACHIEVEMENTS).map(([key, achievement]) => {
-        const isUnlocked = game.achievements.unlocked[key];
-        const isCompleted = achievement.condition(game);
-        
-        return `
-            <div class="achievement ${isUnlocked ? '' : 'locked'}">
-                <div class="achievement-icon">${achievement.icon}</div>
-                <div class="achievement-name">${achievement.name}</div>
-                <div class="achievement-desc">${achievement.desc}</div>
-                ${!isUnlocked ? `
-                    <div class="achievement-progress">
-                        <div class="achievement-progress-bar" style="width: ${isCompleted ? '100%' : '0%'}"></div>
-                    </div>
-                    <div class="achievement-reward">Награда: ${achievement.reward} монет</div>
-                ` : `
-                    <div class="achievement-completed">✅ Получено</div>
-                `}
-            </div>
-        `;
-    }).join('');
+.btn-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    margin-bottom: 6px;
+    transition: transform 0.3s ease;
 }
 
-// Купить предмет
-function buyItem(itemId, itemType) {
-    playSound('click');
-    
-    let price = 0;
-    let item;
-    
-    if (itemType === 'food') {
-        item = SHOP_ITEMS.FOOD.find(i => i.id === itemId);
-        price = item.price;
-        
-        if (game.coins >= price) {
-            game.coins -= price;
-            game.inventory.food[itemId]++;
-            showNotification(`Куплено: ${item.name}`, 'success');
-            playSound('coin');
-            createCoins(3);
-        } else {
-            showNotification("Недостаточно монет", 'warning');
-            return;
-        }
-    } else if (itemType === 'toys') {
-        item = SHOP_ITEMS.TOYS.find(i => i.id === itemId);
-        price = item.price;
-        
-        if (game.coins >= price) {
-            game.coins -= price;
-            game.inventory.toys[itemId]++;
-            showNotification(`Куплено: ${item.name}`, 'success');
-            playSound('coin');
-            createCoins(3);
-        } else {
-            showNotification("Недостаточно монет", 'warning');
-            return;
-        }
-    } else if (itemType === 'clothes') {
-        item = SHOP_ITEMS.CLOTHES.find(i => i.id === itemId);
-        price = item.price;
-        
-        if (game.inventory.clothes[itemId]) {
-            showNotification("Уже куплено", 'warning');
-            return;
-        }
-        
-        if (game.coins >= price) {
-            game.coins -= price;
-            game.inventory.clothes[itemId] = true;
-            showNotification(`Куплено: ${item.name}`, 'success');
-            playSound('coin');
-            createCoins(5);
-        } else {
-            showNotification("Недостаточно монет", 'warning');
-            return;
-        }
-    }
-    
-    // Обновляем кнопки в магазине
-    fillShopItems();
-    updateUI();
+.action-btn:hover .btn-icon {
+    transform: scale(1.1);
 }
 
-// Переключить одежду
-function toggleClothes(itemId) {
-    game.wearing[itemId] = !game.wearing[itemId];
-    updatePetClothes();
-    playSound('click');
+/* Эффекты */
+.effects-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 10;
 }
 
-// Проверить достижения
-function checkAchievements() {
-    let newAchievements = 0;
-    
-    for (const [key, achievement] of Object.entries(CONFIG.ACHIEVEMENTS)) {
-        if (!game.achievements.unlocked[key] && achievement.condition(game)) {
-            game.achievements.unlocked[key] = true;
-            addCoins(achievement.reward);
-            showNotification(`Достижение: ${achievement.name}`, 'success');
-            newAchievements++;
-        }
-    }
-    
-    if (newAchievements > 0) {
-        createStars(15);
-    }
+.heart-effect {
+    position: absolute;
+    font-size: 24px;
+    color: var(--primary);
+    animation: floatUp 3s ease-out forwards;
+    z-index: 11;
 }
 
-// Закрыть модальное окно
-function closeModal() {
-    DOM.modalOverlay.classList.remove('active');
-    DOM.shopModal.classList.remove('active');
-    DOM.inventoryModal.classList.remove('active');
-    DOM.achievementsModal.classList.remove('active');
+.coin-effect {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-image: url('images/coin.webp');
+    background-size: contain;
+    animation: coinSpin 1.5s ease-out forwards;
+    z-index: 11;
 }
 
-// Игровой цикл
-function gameLoop() {
-    const now = Date.now();
-    const hoursPassed = (now - game.lastAction) / (1000 * 60 * 60);
-    
-    // Уменьшение показателей со временем
-    if (hoursPassed > 0.5) { // Если прошло больше 30 минут
-        const decayFactor = Math.min(5, hoursPassed); // Максимальный фактор ухудшения - 5
-        
-        game.stats.hunger = Math.max(0, game.stats.hunger - CONFIG.DECAY_RATES.HUNGER * decayFactor);
-        game.stats.happiness = Math.max(0, game.stats.happiness - CONFIG.DECAY_RATES.HAPPINESS * decayFactor);
-        game.stats.energy = Math.max(0, game.stats.energy - CONFIG.DECAY_RATES.ENERGY * decayFactor);
-    }
-    
-    updateUI();
-    
-    // Случайные фразы (10% шанс)
-    if (Math.random() > 0.9) {
-        showRandomPhrase();
-    }
+.star-effect {
+    position: absolute;
+    font-size: 24px;
+    color: var(--accent);
+    animation: starPulse 2s ease-out forwards;
+    z-index: 11;
 }
 
-// Клик по питомцу
-DOM.pet.addEventListener('click', () => {
-    playSound('bark');
-    
-    if (game.state === CONFIG.STATES.HAPPY) {
-        DOM.pet.classList.add('animate__animated', 'animate__bounce');
-        setTimeout(() => {
-            DOM.pet.classList.remove('animate__animated', 'animate__bounce');
-        }, 1000);
-        
-        showRandomPhrase();
-    }
-});
-
-// Обработчики событий кнопок
-DOM.feedBtn.addEventListener('click', feed);
-DOM.playBtn.addEventListener('click', play);
-DOM.careBtn.addEventListener('click', care);
-DOM.shopBtn.addEventListener('click', showShop);
-
-// Обработчики закрытия модальных окон
-DOM.closeShop.addEventListener('click', closeModal);
-DOM.closeInventory.addEventListener('click', closeModal);
-DOM.closeAchievements.addEventListener('click', closeModal);
-DOM.modalOverlay.addEventListener('click', closeModal);
-
-// Обработчики вкладок магазина
-DOM.shopTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-        DOM.shopTabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        
-        const tabId = tab.dataset.tab + '-items';
-        document.querySelectorAll('.shop-items').forEach(item => item.classList.add('hidden'));
-        document.getElementById(tabId).classList.remove('hidden');
-        
-        playSound('click');
-    });
-});
-
-// Обработчики вкладок инвентаря
-DOM.inventoryTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-        DOM.inventoryTabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        
-        const tabId = 'inv-' + tab.dataset.tab + '-items';
-        document.querySelectorAll('.inventory-items').forEach(item => item.classList.add('hidden'));
-        document.getElementById(tabId).classList.remove('hidden');
-        
-        playSound('click');
-    });
-});
-
-// Инициализация игры
-function initGame() {
-    initTelegramApp();
-    updateUI();
-    
-    // Проверяем локальное хранилище (если нет Telegram WebApp)
-    if (!Telegram.WebApp.initDataUnsafe.user) {
-        const savedData = localStorage.getItem('pet_game_data');
-        if (savedData) {
-            loadGame(JSON.parse(savedData));
-        }
-    }
-    
-    // Игровой цикл (каждую минуту)
-    setInterval(gameLoop, 60000);
-    
-    // Приветственное сообщение
-    setTimeout(() => {
-        showSpeech("Привет! Я твой новый пёсик!");
-    }, 1000);
-    
-    // Проверяем достижения при старте
-    checkAchievements();
+@keyframes floatUp {
+    0% { transform: translateY(0) scale(0.8); opacity: 1; }
+    100% { transform: translateY(-100px) scale(1.2); opacity: 0; }
 }
 
-// Запуск игры
-document.addEventListener('DOMContentLoaded', initGame);
+@keyframes coinSpin {
+    0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+    100% { transform: translateY(-80px) rotate(360deg) scale(0.5); opacity: 0; }
+}
+
+@keyframes starPulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.8; }
+    100% { transform: scale(0.5); opacity: 0; }
+}
+
+/* Уведомления */
+.notification {
+    position: fixed;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--primary);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-weight: 600;
+    box-shadow: var(--shadow-md);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 100;
+    max-width: 80%;
+    text-align: center;
+    pointer-events: none;
+}
+
+/* Модальные окна */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    width: 90%;
+    max-width: 400px;
+    max-height: 80vh;
+    background: white;
+    border-radius: 20px;
+    z-index: 1001;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.modal-header {
+    padding: 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--dark);
+    padding: 0 8px;
+}
+
+.modal-content {
+    padding: 16px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Вкладки */
+.tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+.tab-btn {
+    padding: 8px 16px;
+    background: rgba(0, 0, 0, 0.05);
+    border: none;
+    border-radius: 12px;
+    color: var(--dark);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+.tab-btn.active {
+    background: var(--primary);
+    color: white;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Сетка товаров/предметов */
+.items-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.shop-item, .inventory-item {
+    background: white;
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-sm);
+}
+
+.shop-item:hover, .inventory-item:hover {
+    transform
