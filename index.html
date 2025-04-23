@@ -4,71 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SuperPet - Виртуальный питомец</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="game-container">
+        <!-- Фон -->
+        <div class="background" id="background"></div>
+        
         <!-- Верхняя панель -->
         <div class="top-panel">
             <div class="level-container">
-                <span class="level-label">Уровень</span>
-                <span id="level" class="level-value">1</span>
+                <div class="level-badge">
+                    <span id="level">1</span>
+                </div>
                 <div class="xp-bar">
-                    <div id="xp-progress" class="xp-progress"></div>
+                    <div id="xp-progress"></div>
                 </div>
             </div>
             <div class="coins-container">
-                <img src="images/ui/coin.png" alt="Монеты" class="coin-icon">
+                <img src="images/ui/coin.png" alt="Монеты">
                 <span id="coins">100</span>
             </div>
         </div>
 
         <!-- Область питомца -->
-        <div class="pet-area">
+        <div class="pet-container">
             <div id="speech-bubble" class="speech-bubble"></div>
-            <img src="images/pet/default.png" alt="Питомец" id="pet" class="pet">
-            <div id="mood-light" class="mood-light"></div>
-        </div>
-
-        <!-- Статус бары -->
-        <div class="status-bars">
-            <div class="status-item">
-                <img src="images/ui/hunger.png" alt="Голод" class="status-icon">
-                <div class="status-bar">
-                    <div id="hunger-bar" class="bar-fill hunger-fill"></div>
-                </div>
-            </div>
-            <div class="status-item">
-                <img src="images/ui/happy.png" alt="Счастье" class="status-icon">
-                <div class="status-bar">
-                    <div id="happiness-bar" class="bar-fill happy-fill"></div>
-                </div>
-            </div>
-            <div class="status-item">
-                <img src="images/ui/energy.png" alt="Энергия" class="status-icon">
-                <div class="status-bar">
-                    <div id="energy-bar" class="bar-fill energy-fill"></div>
-                </div>
-            </div>
+            <div id="pet-animation" class="pet-animation"></div>
+            <div id="mood-effects"></div>
         </div>
 
         <!-- Панель действий -->
         <div class="action-panel">
             <button id="feed-btn" class="action-btn">
-                <img src="images/ui/food.png" alt="Кормить">
+                <img src="images/ui/food-icon.png" alt="Кормить">
                 <span>Кормить</span>
             </button>
             <button id="play-btn" class="action-btn">
-                <img src="images/ui/game.png" alt="Играть">
+                <img src="images/ui/game-icon.png" alt="Играть">
                 <span>Играть</span>
             </button>
             <button id="care-btn" class="action-btn">
-                <img src="images/ui/care.png" alt="Уход">
+                <img src="images/ui/care-icon.png" alt="Уход">
                 <span>Уход</span>
             </button>
             <button id="shop-btn" class="action-btn">
-                <img src="images/ui/shop.png" alt="Магазин">
+                <img src="images/ui/shop-icon.png" alt="Магазин">
                 <span>Магазин</span>
             </button>
         </div>
@@ -78,12 +60,7 @@
             <div class="modal-content">
                 <span class="close-btn">&times;</span>
                 <h2>Магазин</h2>
-                <div class="shop-tabs">
-                    <button class="tab-btn active" data-category="food">Еда</button>
-                    <button class="tab-btn" data-category="toys">Игрушки</button>
-                </div>
-                <div class="shop-items" id="food-items"></div>
-                <div class="shop-items hidden" id="toys-items"></div>
+                <div class="shop-items" id="shop-items"></div>
             </div>
         </div>
 
