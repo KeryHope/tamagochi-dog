@@ -3,133 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌟 Super Dog — Виртуальный питомец</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap">
+    <title>SuperPet - Виртуальный питомец</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 </head>
 <body>
-    <div class="super-app">
-        <div class="bg-gradient"></div>
-        <div class="particles" id="particles"></div>
-        
-        <div class="main-container">
-            <header class="super-header">
-                <div class="xp-container">
-                    <div class="level-badge">LVL <span id="level">1</span></div>
-                    <div class="xp-bar"><div id="xp-progress"></div></div>
+    <div class="game-container">
+        <!-- Верхняя панель -->
+        <div class="top-panel">
+            <div class="level-container">
+                <span class="level-label">Уровень</span>
+                <span id="level" class="level-value">1</span>
+                <div class="xp-bar">
+                    <div id="xp-progress" class="xp-progress"></div>
                 </div>
-                <div class="coins-container">
-                    <img src="images/coin.png" alt="Монеты" class="coin-icon">
-                    <span id="coins">500</span>
-                </div>
-            </header>
-
-            <main class="content-area">
-                <div class="pet-zone">
-                    <div class="speech-bubble" id="speech-bubble"></div>
-                    <img src="images/dog_super.png" alt="Супер пёсик" id="super-pet" class="super-pet">
-                    <div class="mood-light" id="mood-light"></div>
-                </div>
-
-                <div class="super-stats">
-                    <div class="stat-item">
-                        <img src="images/icon_hunger.png" alt="Голод" class="stat-icon">
-                        <div class="stat-bar"><div id="hunger-bar"></div></div>
-                    </div>
-                    <div class="stat-item">
-                        <img src="images/icon_happy.png" alt="Счастье" class="stat-icon">
-                        <div class="stat-bar"><div id="happiness-bar"></div></div>
-                    </div>
-                    <div class="stat-item">
-                        <img src="images/icon_energy.png" alt="Энергия" class="stat-icon">
-                        <div class="stat-bar"><div id="energy-bar"></div></div>
-                    </div>
-                </div>
-            </main>
-
-            <nav class="action-panel">
-                <button class="action-btn" id="feed-btn">
-                    <img src="images/btn_food.png" alt="Кормить">
-                    <span>Кормить</span>
-                </button>
-                <button class="action-btn" id="play-btn">
-                    <img src="images/btn_game.png" alt="Играть">
-                    <span>Играть</span>
-                </button>
-                <button class="action-btn" id="care-btn">
-                    <img src="images/btn_care.png" alt="Уход">
-                    <span>Уход</span>
-                </button>
-                <button class="action-btn" id="shop-btn">
-                    <img src="images/btn_shop.png" alt="Магазин">
-                    <span>Магазин</span>
-                </button>
-            </nav>
+            </div>
+            <div class="coins-container">
+                <img src="images/ui/coin.png" alt="Монеты" class="coin-icon">
+                <span id="coins">100</span>
+            </div>
         </div>
 
+        <!-- Область питомца -->
+        <div class="pet-area">
+            <div id="speech-bubble" class="speech-bubble"></div>
+            <img src="images/pet/default.png" alt="Питомец" id="pet" class="pet">
+            <div id="mood-light" class="mood-light"></div>
+        </div>
+
+        <!-- Статус бары -->
+        <div class="status-bars">
+            <div class="status-item">
+                <img src="images/ui/hunger.png" alt="Голод" class="status-icon">
+                <div class="status-bar">
+                    <div id="hunger-bar" class="bar-fill"></div>
+                </div>
+            </div>
+            <div class="status-item">
+                <img src="images/ui/happy.png" alt="Счастье" class="status-icon">
+                <div class="status-bar">
+                    <div id="happiness-bar" class="bar-fill"></div>
+                </div>
+            </div>
+            <div class="status-item">
+                <img src="images/ui/energy.png" alt="Энергия" class="status-icon">
+                <div class="status-bar">
+                    <div id="energy-bar" class="bar-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Панель действий -->
+        <div class="action-panel">
+            <button id="feed-btn" class="action-btn">
+                <img src="images/ui/food.png" alt="Кормить">
+                <span>Кормить</span>
+            </button>
+            <button id="play-btn" class="action-btn">
+                <img src="images/ui/game.png" alt="Играть">
+                <span>Играть</span>
+            </button>
+            <button id="care-btn" class="action-btn">
+                <img src="images/ui/care.png" alt="Уход">
+                <span>Уход</span>
+            </button>
+            <button id="shop-btn" class="action-btn">
+                <img src="images/ui/shop.png" alt="Магазин">
+                <span>Магазин</span>
+            </button>
+        </div>
+
+        <!-- Магазин (модальное окно) -->
+        <div id="shop-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h2>Магазин</h2>
+                <div class="shop-tabs">
+                    <button class="tab-btn active" data-category="food">Еда</button>
+                    <button class="tab-btn" data-category="toys">Игрушки</button>
+                </div>
+                <div class="shop-items" id="food-items">
+                    <!-- Товары будут добавляться через JS -->
+                </div>
+                <div class="shop-items hidden" id="toys-items"></div>
+            </div>
+        </div>
+
+        <!-- Эффекты -->
         <div id="effects-layer"></div>
-        <div class="super-notification" id="notification"></div>
 
-        <!-- Модальные окна -->
-        <div class="modal" id="shop-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Магазин</h3>
-                    <button class="close-modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div class="shop-item">
-                        <img src="images/item_food.png" alt="Еда">
-                        <div class="item-info">
-                            <h4>Пакет корма</h4>
-                            <p>+30 к сытости</p>
-                        </div>
-                        <button class="buy-btn" data-item="food" data-price="20">20 <img src="images/coin.png" alt="Монеты"></button>
-                    </div>
-                    <div class="shop-item">
-                        <img src="images/item_toy.png" alt="Игрушка">
-                        <div class="item-info">
-                            <h4>Игрушка</h4>
-                            <p>+15 к счастью</p>
-                        </div>
-                        <button class="buy-btn" data-item="toy" data-price="50">50 <img src="images/coin.png" alt="Монеты"></button>
-                    </div>
-                    <div class="shop-item">
-                        <img src="images/item_clothes.png" alt="Одежда">
-                        <div class="item-info">
-                            <h4>Костюм</h4>
-                            <p>Стильный наряд</p>
-                        </div>
-                        <button class="buy-btn" data-item="clothes" data-price="100">100 <img src="images/coin.png" alt="Монеты"></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal" id="inventory-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Инвентарь</h3>
-                    <button class="close-modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div class="inventory-item">
-                        <img src="images/item_food.png" alt="Еда">
-                        <span id="food-count">5</span>
-                    </div>
-                    <div class="inventory-item">
-                        <img src="images/item_toy.png" alt="Игрушки">
-                        <span id="toy-count">2</span>
-                    </div>
-                    <div class="inventory-item">
-                        <img src="images/item_clothes.png" alt="Одежда">
-                        <span id="clothes-count">0</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- Уведомления -->
+        <div id="notification" class="notification"></div>
     </div>
 
     <script src="script.js"></script>
