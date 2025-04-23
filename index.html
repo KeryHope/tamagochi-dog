@@ -4,35 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SuperPet - Виртуальный питомец</title>
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="game-container">
         <!-- Фон -->
-        <div class="background" id="background"></div>
+        <div class="background"></div>
         
         <!-- Верхняя панель -->
         <div class="top-panel">
             <div class="level-container">
-                <div class="level-badge">
-                    <span id="level">1</span>
-                </div>
+                <div class="level-icon"></div>
+                <span id="level">1</span>
                 <div class="xp-bar">
                     <div id="xp-progress"></div>
                 </div>
             </div>
-            <div class="coins-container">
-                <img src="images/ui/coin.png" alt="Монеты">
-                <span id="coins">100</span>
+            <div class="currency-container">
+                <div class="coins">
+                    <img src="images/ui/coin.png" alt="Монеты">
+                    <span id="coins">1000</span>
+                </div>
+                <div class="gems">
+                    <img src="images/ui/gem.png" alt="Кристаллы">
+                    <span id="gems">10</span>
+                </div>
             </div>
         </div>
 
         <!-- Область питомца -->
         <div class="pet-container">
+            <div id="pet" class="pet"></div>
+            <div id="pet-effects" class="pet-effects"></div>
             <div id="speech-bubble" class="speech-bubble"></div>
-            <div id="pet-animation" class="pet-animation"></div>
-            <div id="mood-effects"></div>
         </div>
 
         <!-- Панель действий -->
@@ -58,8 +63,15 @@
         <!-- Магазин -->
         <div id="shop-modal" class="modal">
             <div class="modal-content">
-                <span class="close-btn">&times;</span>
-                <h2>Магазин</h2>
+                <div class="modal-header">
+                    <h2>Магазин</h2>
+                    <span class="close-btn">&times;</span>
+                </div>
+                <div class="shop-tabs">
+                    <button class="tab-btn active" data-tab="food">Еда</button>
+                    <button class="tab-btn" data-tab="toys">Игрушки</button>
+                    <button class="tab-btn" data-tab="premium">Премиум</button>
+                </div>
                 <div class="shop-items" id="shop-items"></div>
             </div>
         </div>
