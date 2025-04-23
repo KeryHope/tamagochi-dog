@@ -4,83 +4,132 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SuperPet - Виртуальный питомец</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="game-container">
-        <!-- Фон -->
-        <div class="background"></div>
+        <!-- Фон игры -->
+        <div class="game-background"></div>
         
-        <!-- Верхняя панель -->
+        <!-- Верхняя панель с прогрессом -->
         <div class="top-panel">
-            <div class="level-container">
-                <div class="level-icon"></div>
-                <span id="level">1</span>
-                <div class="xp-bar">
-                    <div id="xp-progress"></div>
+            <div class="player-info">
+                <div class="level-container">
+                    <div class="level-icon">LVL</div>
+                    <span id="level">1</span>
+                    <div class="xp-bar">
+                        <div id="xp-progress" class="xp-progress"></div>
+                    </div>
                 </div>
             </div>
+            
             <div class="currency-container">
-                <div class="coins">
+                <div class="coins-box">
                     <img src="images/ui/coin.png" alt="Монеты">
-                    <span id="coins">1000</span>
+                    <span id="coins">5000</span>
                 </div>
-                <div class="gems">
+                <div class="gems-box">
                     <img src="images/ui/gem.png" alt="Кристаллы">
-                    <span id="gems">10</span>
+                    <span id="gems">25</span>
                 </div>
             </div>
         </div>
 
-        <!-- Область питомца -->
-        <div class="pet-container">
-            <div id="pet" class="pet"></div>
-            <div id="pet-effects" class="pet-effects"></div>
-            <div id="speech-bubble" class="speech-bubble"></div>
+        <!-- Основная игровая зона -->
+        <div class="game-area">
+            <div class="pet-container">
+                <div id="pet" class="pet"></div>
+                <div id="pet-effects" class="pet-effects"></div>
+                <div id="speech-bubble" class="speech-bubble"></div>
+            </div>
+            
+            <div class="stats-container">
+                <div class="stat-bar">
+                    <div class="stat-icon hunger-icon"></div>
+                    <div class="stat-progress">
+                        <div id="hunger-bar" class="stat-fill"></div>
+                    </div>
+                </div>
+                <div class="stat-bar">
+                    <div class="stat-icon happiness-icon"></div>
+                    <div class="stat-progress">
+                        <div id="happiness-bar" class="stat-fill"></div>
+                    </div>
+                </div>
+                <div class="stat-bar">
+                    <div class="stat-icon energy-icon"></div>
+                    <div class="stat-progress">
+                        <div id="energy-bar" class="stat-fill"></div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Панель действий -->
         <div class="action-panel">
-            <button id="feed-btn" class="action-btn">
+            <button id="feed-btn" class="action-btn pulse">
                 <img src="images/ui/food-icon.png" alt="Кормить">
                 <span>Кормить</span>
             </button>
-            <button id="play-btn" class="action-btn">
+            <button id="play-btn" class="action-btn pulse">
                 <img src="images/ui/game-icon.png" alt="Играть">
                 <span>Играть</span>
             </button>
-            <button id="care-btn" class="action-btn">
+            <button id="care-btn" class="action-btn pulse">
                 <img src="images/ui/care-icon.png" alt="Уход">
                 <span>Уход</span>
             </button>
-            <button id="shop-btn" class="action-btn">
+            <button id="shop-btn" class="action-btn premium pulse">
                 <img src="images/ui/shop-icon.png" alt="Магазин">
                 <span>Магазин</span>
             </button>
         </div>
 
-        <!-- Магазин -->
+        <!-- Модальные окна -->
         <div id="shop-modal" class="modal">
-            <div class="modal-content">
+            <div class="modal-container">
                 <div class="modal-header">
-                    <h2>Магазин</h2>
-                    <span class="close-btn">&times;</span>
+                    <h2>МАГАЗИН</h2>
+                    <button class="close-btn">&times;</button>
                 </div>
+                
                 <div class="shop-tabs">
                     <button class="tab-btn active" data-tab="food">Еда</button>
                     <button class="tab-btn" data-tab="toys">Игрушки</button>
-                    <button class="tab-btn" data-tab="premium">Премиум</button>
+                    <button class="tab-btn premium" data-tab="premium">Премиум</button>
                 </div>
-                <div class="shop-items" id="shop-items"></div>
+                
+                <div class="shop-items-container">
+                    <div class="shop-items" id="food-items"></div>
+                    <div class="shop-items hidden" id="toys-items"></div>
+                    <div class="shop-items hidden" id="premium-items"></div>
+                </div>
+                
+                <div class="daily-bonus-container">
+                    <h3>Ежедневный бонус</h3>
+                    <button id="daily-bonus-btn" class="bonus-btn">
+                        <span>Получить +100 монет</span>
+                        <div class="timer" id="daily-timer">23:59:59</div>
+                    </button>
+                </div>
             </div>
         </div>
 
         <!-- Эффекты -->
         <div id="effects-layer"></div>
-
+        
         <!-- Уведомления -->
         <div id="notification" class="notification"></div>
+        
+        <!-- Достижения -->
+        <div id="achievement-popup" class="achievement-popup">
+            <div class="achievement-badge">🏆</div>
+            <div class="achievement-content">
+                <h3>Достижение!</h3>
+                <p id="achievement-text">Новое достижение</p>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
