@@ -4,20 +4,27 @@
     --accent: #FFD166;
     --dark: #2D3047;
     --light: #F7F7FF;
-    --shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    --premium: #9B5DE5;
+    
+    --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.3);
+    
+    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     user-select: none;
 }
 
 body {
     overflow: hidden;
     background: #1A1A2E;
+    color: white;
 }
 
 .game-container {
@@ -29,14 +36,14 @@ body {
     overflow: hidden;
 }
 
-.background {
+.game-background {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-image: url('images/background.jpg');
+    background-image: url('../images/background.jpg');
     background-size: cover;
     background-position: center;
-    filter: brightness(0.8);
+    filter: brightness(0.9);
     z-index: 0;
 }
 
@@ -49,12 +56,18 @@ body {
     z-index: 10;
 }
 
-.level-container {
+.player-info {
     display: flex;
     align-items: center;
     gap: 10px;
+}
+
+.level-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     background: rgba(0, 0, 0, 0.5);
-    padding: 8px 15px;
+    padding: 8px 12px;
     border-radius: 20px;
     backdrop-filter: blur(5px);
 }
@@ -68,29 +81,28 @@ body {
     justify-content: center;
     align-items: center;
     color: var(--dark);
+    font-size: 10px;
     font-weight: bold;
 }
 
 .level-container span {
     font-weight: bold;
-    color: white;
-    min-width: 20px;
+    font-size: 16px;
 }
 
 .xp-bar {
-    width: 100px;
-    height: 8px;
+    width: 80px;
+    height: 6px;
     background: rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
+    border-radius: 3px;
     overflow: hidden;
-    margin-left: 10px;
 }
 
-#xp-progress {
+.xp-progress {
     height: 100%;
     width: 0%;
     background: linear-gradient(90deg, var(--accent), #FF9F1C);
-    transition: width 0.5s ease;
+    transition: var(--transition);
 }
 
 .currency-container {
@@ -98,37 +110,43 @@ body {
     gap: 10px;
 }
 
-.coins, .gems {
+.coins-box, .gems-box {
     display: flex;
     align-items: center;
     gap: 5px;
-    background: rgba(0, 0, 0, 0.5);
-    padding: 8px 15px;
+    padding: 8px 12px;
     border-radius: 20px;
-    backdrop-filter: blur(5px);
-}
-
-.coins img, .gems img {
-    width: 20px;
-    height: 20px;
-}
-
-.coins span, .gems span {
     font-weight: bold;
-    color: white;
+    font-size: 14px;
 }
 
-.coins {
+.coins-box {
     background: linear-gradient(90deg, #FF9F1C, #FFD166);
 }
 
-.gems {
+.gems-box {
     background: linear-gradient(90deg, #00A6FB, #00C2FF);
+}
+
+.coins-box img, .gems-box img {
+    width: 18px;
+    height: 18px;
+}
+
+.game-area {
+    position: relative;
+    height: 55vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 5;
 }
 
 .pet-container {
     position: relative;
-    height: 50vh;
+    width: 100%;
+    height: 70%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -137,14 +155,15 @@ body {
 .pet {
     width: 220px;
     height: 220px;
-    background-image: url('images/pet/idle.png');
+    background-image: url('../images/pet/idle.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     position: relative;
     z-index: 5;
     filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
-    transition: all 0.3s ease;
+    transition: var(--transition);
+    transform-origin: center bottom;
 }
 
 .pet-effects {
@@ -155,22 +174,26 @@ body {
     left: 0;
     z-index: 6;
     pointer-events: none;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .speech-bubble {
     position: absolute;
-    top: 20%;
+    top: 15%;
     background: white;
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-size: 16px;
+    padding: 10px 15px;
+    border-radius: 18px;
+    font-size: 14px;
     color: var(--dark);
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: var(--transition);
     z-index: 10;
-    box-shadow: var(--shadow);
-    max-width: 80%;
+    box-shadow: var(--shadow-sm);
+    max-width: 70%;
     text-align: center;
+    transform: translateY(10px);
 }
 
 .speech-bubble:after {
@@ -184,6 +207,72 @@ body {
     border-color: white transparent;
 }
 
+.stats-container {
+    width: 90%;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 15px;
+    padding: 15px;
+    backdrop-filter: blur(5px);
+    margin-top: 20px;
+}
+
+.stat-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.stat-bar:last-child {
+    margin-bottom: 0;
+}
+
+.stat-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 12px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.hunger-icon {
+    background-image: url('../images/ui/food-icon.png');
+}
+
+.happiness-icon {
+    background-image: url('../images/ui/game-icon.png');
+}
+
+.energy-icon {
+    background-image: url('../images/ui/care-icon.png');
+}
+
+.stat-progress {
+    flex: 1;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.stat-fill {
+    height: 100%;
+    width: 100%;
+    transition: var(--transition);
+}
+
+#hunger-bar {
+    background: linear-gradient(90deg, #FF6B35, #FF9F1C);
+}
+
+#happiness-bar {
+    background: linear-gradient(90deg, #00A6FB, #00C2FF);
+}
+
+#energy-bar {
+    background: linear-gradient(90deg, #9B5DE5, #C77DFF);
+}
+
 .action-panel {
     position: absolute;
     bottom: 20px;
@@ -191,7 +280,7 @@ body {
     right: 0;
     display: flex;
     justify-content: space-around;
-    padding: 0 20px;
+    padding: 0 15px;
     z-index: 10;
 }
 
@@ -199,36 +288,50 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: rgba(255, 255, 255, 0.9);
+    background: white;
     border: none;
     border-radius: 15px;
-    padding: 12px;
+    padding: 12px 8px;
     width: 70px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: var(--shadow);
+    transition: var(--transition);
+    box-shadow: var(--shadow-md);
 }
 
 .action-btn:hover {
     transform: translateY(-5px) scale(1.05);
-    background: white;
+    box-shadow: var(--shadow-lg);
+}
+
+.action-btn.premium {
+    background: linear-gradient(45deg, var(--premium), #C77DFF);
+    color: white;
 }
 
 .action-btn img {
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
     margin-bottom: 5px;
-    transition: transform 0.3s ease;
-}
-
-.action-btn:hover img {
-    transform: scale(1.1);
+    transition: var(--transition);
 }
 
 .action-btn span {
     font-size: 12px;
     font-weight: bold;
-    color: var(--dark);
+}
+
+.action-btn.premium span {
+    color: white;
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }
 
 .modal {
@@ -238,24 +341,30 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.8);
     z-index: 100;
     justify-content: center;
     align-items: center;
     backdrop-filter: blur(5px);
 }
 
-.modal-content {
+.modal-container {
     background: white;
     border-radius: 20px;
     width: 90%;
     max-width: 400px;
-    box-shadow: var(--shadow);
     overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    animation: modalOpen 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modalOpen {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }
 
 .modal-header {
-    background: linear-gradient(90deg, var(--primary), var(--accent));
+    background: linear-gradient(45deg, var(--primary), var(--accent));
     padding: 15px 20px;
     color: white;
     display: flex;
@@ -265,12 +374,16 @@ body {
 
 .modal-header h2 {
     font-size: 20px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .close-btn {
+    background: none;
+    border: none;
+    color: white;
     font-size: 28px;
     cursor: pointer;
-    transition: transform 0.3s ease;
+    transition: var(--transition);
 }
 
 .close-btn:hover {
@@ -291,19 +404,27 @@ body {
     cursor: pointer;
     font-weight: bold;
     color: var(--dark);
-    transition: all 0.3s ease;
+    transition: var(--transition);
+    font-size: 12px;
 }
 
 .tab-btn.active {
     background: white;
     border-radius: 10px;
     color: var(--primary);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-sm);
+}
+
+.tab-btn.premium.active {
+    color: var(--premium);
+}
+
+.shop-items-container {
+    max-height: 50vh;
+    overflow-y: auto;
 }
 
 .shop-items {
-    max-height: 50vh;
-    overflow-y: auto;
     padding: 15px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -315,12 +436,13 @@ body {
     border-radius: 15px;
     padding: 15px;
     text-align: center;
-    transition: all 0.3s ease;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
 }
 
 .shop-item:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-md);
 }
 
 .shop-item img {
@@ -328,30 +450,42 @@ body {
     height: 60px;
     object-fit: contain;
     margin-bottom: 10px;
+    transition: var(--transition);
+}
+
+.shop-item:hover img {
+    transform: scale(1.1);
 }
 
 .shop-item h3 {
-    font-size: 16px;
+    font-size: 14px;
     margin-bottom: 5px;
     color: var(--dark);
 }
 
-.shop-item .price {
+.shop-item p {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.price {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 5px;
     margin: 10px 0;
+    font-weight: bold;
 }
 
-.shop-item .price img {
-    width: 20px;
-    height: 20px;
+.price img {
+    width: 16px;
+    height: 16px;
     margin: 0;
 }
 
 .buy-btn {
-    background: linear-gradient(90deg, var(--primary), var(--accent));
+    background: linear-gradient(45deg, var(--primary), var(--accent));
     color: white;
     border: none;
     border-radius: 20px;
@@ -359,30 +493,57 @@ body {
     width: 100%;
     cursor: pointer;
     font-weight: bold;
-    transition: all 0.3s ease;
+    transition: var(--transition);
+    font-size: 12px;
+    box-shadow: 0 2px 5px rgba(255, 107, 53, 0.3);
 }
 
 .buy-btn:hover {
     transform: scale(1.05);
-    box-shadow: 0 3px 10px rgba(255, 107, 53, 0.3);
+    box-shadow: 0 5px 10px rgba(255, 107, 53, 0.4);
 }
 
-.notification {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: linear-gradient(90deg, var(--primary), var(--accent));
-    color: white;
-    padding: 12px 24px;
-    border-radius: 30px;
-    box-shadow: var(--shadow);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 1000;
-    font-weight: bold;
+.daily-bonus-container {
+    padding: 15px;
+    border-top: 1px solid #eee;
+}
+
+.daily-bonus-container h3 {
+    font-size: 14px;
+    color: var(--dark);
+    margin-bottom: 10px;
     text-align: center;
-    max-width: 80%;
+}
+
+.bonus-btn {
+    background: linear-gradient(45deg, var(--secondary), #00C2FF);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 12px;
+    width: 100%;
+    cursor: pointer;
+    font-weight: bold;
+    transition: var(--transition);
+    box-shadow: 0 2px 5px rgba(0, 166, 251, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.bonus-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(0, 166, 251, 0.4);
+}
+
+.bonus-btn span {
+    font-size: 12px;
+}
+
+.timer {
+    font-size: 10px;
+    margin-top: 5px;
+    opacity: 0.8;
 }
 
 #effects-layer {
@@ -401,6 +562,7 @@ body {
     font-weight: bold;
     color: #FFD166;
     animation: coin-float 1.5s ease-out forwards;
+    z-index: 10;
 }
 
 .heart-effect {
@@ -408,6 +570,17 @@ body {
     font-size: 24px;
     color: #FF6B35;
     animation: float 2s ease-out forwards;
+    z-index: 10;
+}
+
+.sparkle-effect {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-image: url('../images/effects/sparkle.png');
+    background-size: contain;
+    animation: sparkle 1.5s ease-out forwards;
+    z-index: 10;
 }
 
 @keyframes float {
@@ -432,17 +605,87 @@ body {
     }
 }
 
-@keyframes pet-pulse {
-    0%, 100% {
-        transform: scale(1);
+@keyframes sparkle {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
     }
     50% {
-        transform: scale(1.05);
+        transform: scale(1.2);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.8);
+        opacity: 0;
     }
 }
 
-.pet-happy {
-    animation: pet-pulse 1s infinite;
+.notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(45deg, var(--primary), var(--accent));
+    color: white;
+    padding: 12px 24px;
+    border-radius: 30px;
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    transition: var(--transition);
+    z-index: 1000;
+    font-weight: bold;
+    text-align: center;
+    max-width: 80%;
+}
+
+.achievement-popup {
+    position: fixed;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border-radius: 15px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    transition: var(--transition);
+}
+
+.achievement-badge {
+    font-size: 30px;
+    flex-shrink: 0;
+}
+
+.achievement-content h3 {
+    color: var(--primary);
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.achievement-content p {
+    color: var(--dark);
+    font-size: 12px;
+}
+
+/* Анимации питомца */
+@keyframes pet-idle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes pet-happy {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes pet-excited {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-10px) rotate(5deg); }
+    50% { transform: translateY(0) rotate(0deg); }
+    75% { transform: translateY(-10px) rotate(-5deg); }
 }
 
 /* Адаптивность */
@@ -459,5 +702,15 @@ body {
     
     .shop-items {
         grid-template-columns: 1fr;
+    }
+    
+    .stat-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 8px;
+    }
+    
+    .stat-progress {
+        height: 8px;
     }
 }
