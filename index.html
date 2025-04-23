@@ -36,19 +36,19 @@
             <div class="status-item">
                 <img src="images/ui/hunger.png" alt="Голод" class="status-icon">
                 <div class="status-bar">
-                    <div id="hunger-bar" class="bar-fill"></div>
+                    <div id="hunger-bar" class="bar-fill hunger-fill"></div>
                 </div>
             </div>
             <div class="status-item">
                 <img src="images/ui/happy.png" alt="Счастье" class="status-icon">
                 <div class="status-bar">
-                    <div id="happiness-bar" class="bar-fill"></div>
+                    <div id="happiness-bar" class="bar-fill happy-fill"></div>
                 </div>
             </div>
             <div class="status-item">
                 <img src="images/ui/energy.png" alt="Энергия" class="status-icon">
                 <div class="status-bar">
-                    <div id="energy-bar" class="bar-fill"></div>
+                    <div id="energy-bar" class="bar-fill energy-fill"></div>
                 </div>
             </div>
         </div>
@@ -73,7 +73,7 @@
             </button>
         </div>
 
-        <!-- Магазин (модальное окно) -->
+        <!-- Магазин -->
         <div id="shop-modal" class="modal">
             <div class="modal-content">
                 <span class="close-btn">&times;</span>
@@ -82,9 +82,7 @@
                     <button class="tab-btn active" data-category="food">Еда</button>
                     <button class="tab-btn" data-category="toys">Игрушки</button>
                 </div>
-                <div class="shop-items" id="food-items">
-                    <!-- Товары будут добавляться через JS -->
-                </div>
+                <div class="shop-items" id="food-items"></div>
                 <div class="shop-items hidden" id="toys-items"></div>
             </div>
         </div>
