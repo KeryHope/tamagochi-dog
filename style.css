@@ -5,6 +5,7 @@
     --dark: #2D3047;
     --light: #F7F7FF;
     --premium: #9B5DE5;
+    --danger: #FF3A3A;
     
     --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.2);
@@ -45,6 +46,7 @@ body {
     background-position: center;
     filter: brightness(0.9);
     z-index: 0;
+    transition: background-image 0.5s ease;
 }
 
 .top-panel {
@@ -358,6 +360,10 @@ body {
     animation: modalOpen 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+.modal-container.small {
+    max-width: 300px;
+}
+
 @keyframes modalOpen {
     from { transform: scale(0.8); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
@@ -668,6 +674,185 @@ body {
 .achievement-content p {
     color: var(--dark);
     font-size: 12px;
+}
+
+/* Настройки */
+.settings-options {
+    padding: 20px;
+}
+
+.setting {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    color: var(--dark);
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: var(--transition);
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: var(--transition);
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--primary);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.action-btn.danger {
+    background: linear-gradient(45deg, var(--danger), #FF6B6B);
+    margin-top: 30px;
+}
+
+/* Мини-игра */
+.minigame-area {
+    padding: 20px;
+    text-align: center;
+}
+
+#minigame-container {
+    width: 100%;
+    height: 200px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.target {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background-image: url('../images/items/toy1.png');
+    background-size: contain;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.target:active {
+    transform: scale(0.9);
+}
+
+.minigame-stats {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    color: var(--dark);
+}
+
+/* Кастомизация */
+.customize-option {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    border: 2px solid #ddd;
+    cursor: pointer;
+    transition: var(--transition);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.customize-option.selected {
+    border-color: var(--primary);
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(255, 107, 53, 0.5);
+}
+
+.customize-section {
+    margin-bottom: 20px;
+}
+
+.customize-section h3 {
+    color: var(--dark);
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+/* Telegram кнопка */
+.telegram-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #0088cc;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 15px;
+    margin-top: 15px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: var(--transition);
+    width: 100%;
+}
+
+.telegram-btn:hover {
+    background: #0077b5;
+}
+
+.telegram-btn img {
+    width: 20px;
+    height: 20px;
+}
+
+.telegram-btn.hidden {
+    display: none;
+}
+
+/* Иконка настроек */
+.icon-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: var(--transition);
+    padding: 5px;
+    border-radius: 50%;
+}
+
+.icon-btn:hover {
+    transform: rotate(90deg);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 /* Анимации питомца */
