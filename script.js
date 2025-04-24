@@ -1,160 +1,85 @@
-/**
- * SuperPet - Ultimate Virtual Pet Game
- * 
- * Основной игровой скрипт с полной функциональностью:
- * - Система ухода за питомцем
- * - Магазин с разными категориями товаров
- * - Ежедневные бонусы
- * - Достижения
- * - Настройки и персонализация
- * - PWA поддержка
- */
-
 // Конфигурация игры
 const CONFIG = {
-    // Настройки параметров
     STATS: {
         MAX: 100,
         HUNGER_DECREASE: 0.5,
         HAPPINESS_DECREASE: 0.4,
         ENERGY_DECREASE: 0.3,
-        HYGIENE_DECREASE: 0.2,
-        
         FEED_AMOUNT: 30,
-        PLAY_AMOUNT: 25,
-        CARE_AMOUNT: 40,
-        PET_AMOUNT: 10,
-        CLEAN_AMOUNT: 35
+        PLAY_AMOUNT: 35,
+        CARE_AMOUNT: 50,
+        PET_AMOUNT: 10
     },
     
-    // Магазин
     SHOP_ITEMS: {
         food: [
             {
                 id: 'food1',
-                name: 'Обычный корм',
-                price: 20,
+                name: 'Рыбка',
+                price: 25,
                 priceType: 'coins',
-                image: 'assets/images/items/food1.png',
-                effect: { hunger: 25 },
+                image: 'food1.png',
+                effect: { hunger: 30 },
                 description: 'Восстанавливает сытость'
             },
             {
                 id: 'food2',
-                name: 'Вкусный корм',
-                price: 50,
-                priceType: 'coins',
-                image: 'assets/images/items/food2.png',
-                effect: { hunger: 40, happiness: 10 },
-                description: 'Вкусная еда для питомца'
-            },
-            {
-                id: 'food3',
                 name: 'Премиум корм',
                 price: 5,
                 priceType: 'gems',
-                image: 'assets/images/items/food3.png',
-                effect: { hunger: 60, happiness: 15, energy: 10 },
-                description: 'Элитное питание'
+                image: 'food2.png',
+                effect: { hunger: 50, happiness: 15 },
+                description: 'Полное восстановление'
             }
         ],
         toys: [
             {
                 id: 'toy1',
                 name: 'Мячик',
-                price: 30,
+                price: 40,
                 priceType: 'coins',
-                image: 'assets/images/items/toy1.png',
-                effect: { happiness: 25, energy: -10 },
-                description: 'Простая игрушка'
+                image: 'toy1.png',
+                effect: { happiness: 30 },
+                description: '+30 к счастью'
             },
             {
                 id: 'toy2',
-                name: 'Плюшевая игрушка',
-                price: 60,
-                priceType: 'coins',
-                image: 'assets/images/items/toy2.png',
-                effect: { happiness: 40, energy: -15 },
-                description: 'Мягкая и приятная'
-            },
-            {
-                id: 'toy3',
-                name: 'Интерактивная игрушка',
+                name: 'Игрушка',
                 price: 8,
                 priceType: 'gems',
-                image: 'assets/images/items/toy3.png',
-                effect: { happiness: 60, hunger: -10 },
+                image: 'toy2.png',
+                effect: { happiness: 50, energy: 10 },
                 description: 'Супер-развлечение'
-            }
-        ],
-        decor: [
-            {
-                id: 'decor1',
-                name: 'Коврик',
-                price: 100,
-                priceType: 'coins',
-                image: 'assets/images/items/toy1.png',
-                effect: { happiness: 15 },
-                description: 'Уютный коврик'
-            },
-            {
-                id: 'decor2',
-                name: 'Домик',
-                price: 250,
-                priceType: 'coins',
-                image: 'assets/images/items/toy2.png',
-                effect: { happiness: 30, energy: 20 },
-                description: 'Уютное жилище'
-            },
-            {
-                id: 'decor3',
-                name: 'Премиум декор',
-                price: 15,
-                priceType: 'gems',
-                image: 'assets/images/items/toy3.png',
-                effect: { happiness: 50, hygiene: 20 },
-                description: 'Роскошный декор'
             }
         ],
         premium: [
             {
-                id: 'gem-pack-small',
+                id: 'gem-pack',
                 name: 'Набор кристаллов',
                 price: 1.99,
                 priceType: 'real',
-                image: 'assets/images/ui/gem.png',
+                image: 'gem-pack.png',
                 effect: { gems: 15 },
                 description: '15 премиум кристаллов'
-            },
-            {
-                id: 'gem-pack-medium',
-                name: 'Большой набор',
-                price: 3.99,
-                priceType: 'real',
-                image: 'assets/images/ui/gem.png',
-                effect: { gems: 35 },
-                description: '35 премиум кристаллов'
             },
             {
                 id: 'mega-pack',
                 name: 'Мега набор',
                 price: 4.99,
                 priceType: 'real',
-                image: 'assets/images/ui/coin.png',
+                image: 'mega-pack.png',
                 effect: { gems: 50, coins: 2000 },
                 description: 'Максимальный набор'
             }
         ]
     },
     
-    // Опыт и уровни
     XP: {
-        PER_ACTION: 15,
+        PER_ACTION: 20,
         BASE_LEVEL_UP: 100,
         MULTIPLIER: 1.25
     },
     
-    // Награды
     REWARDS: {
         LEVEL_UP_COINS: 150,
         LEVEL_UP_GEMS: 2,
@@ -162,7 +87,6 @@ const CONFIG = {
         ACHIEVEMENT_REWARD: 50
     },
     
-    // Сообщения
     MESSAGES: {
         HAPPY: [
             "Я тебя люблю!",
@@ -189,65 +113,37 @@ const CONFIG = {
             "Поиграй со мной",
             "Погладь меня",
             "Я одинокий"
-        ],
-        DIRTY: [
-            "Я грязный!",
-            "Помой меня!",
-            "Фу, как неприятно",
-            "Нужна ванна!"
         ]
     },
     
-    // Достижения
     ACHIEVEMENTS: [
         {
             id: 'first_feed',
             name: 'Первый обед',
             description: 'Покормите питомца впервые',
             condition: stats => stats.feeds >= 1,
-            reward: { coins: 50 }
+            reward: 50
         },
         {
             id: 'pet_lover',
             name: 'Любитель животных',
             description: 'Погладьте питомца 50 раз',
             condition: stats => stats.pets >= 50,
-            reward: { coins: 100 }
+            reward: 100
         },
         {
             id: 'play_master',
             name: 'Мастер игр',
             description: 'Поиграйте 30 раз',
             condition: stats => stats.plays >= 30,
-            reward: { coins: 150, gems: 1 }
+            reward: 150
         },
         {
             id: 'rich_owner',
             name: 'Богатый хозяин',
             description: 'Заработайте 5000 монет',
             condition: stats => stats.totalCoins >= 5000,
-            reward: { coins: 200, gems: 5 }
-        },
-        {
-            id: 'daily_player',
-            name: 'Ежедневный игрок',
-            description: 'Получите бонус 3 дня подряд',
-            condition: stats => stats.dailyStreak >= 3,
-            reward: { coins: 100, gems: 1 }
-        },
-        {
-            id: 'clean_freak',
-            name: 'Чистюля',
-            description: 'Помойте питомца 20 раз',
-            condition: stats => stats.cleans >= 20,
-            reward: { coins: 150 }
-        },
-        {
-            id: 'veteran',
-            name: 'Ветеран',
-            description: 'Достигните 10 уровня',
-            condition: stats => stats.level >= 10,
-            reward: { coins: 500, gems: 10 }
+            reward: 200
         }
     ]
 };
@@ -256,52 +152,38 @@ const CONFIG = {
 const gameState = {
     stats: {
         hunger: 80,
-        happiness: 70,
-        energy: 90,
-        hygiene: 85
+        happiness: 90,
+        energy: 100
     },
     level: 1,
     xp: 0,
-    coins: 1000,
-    gems: 10,
+    coins: 5000,
+    gems: 25,
     inventory: {
         food: 5,
-        toys: 2,
-        decor: 0
+        toys: 2
     },
     lastAction: Date.now(),
     lastPlay: 0,
     lastFeed: 0,
-    lastClean: 0,
     lastDailyBonus: 0,
-    dailyStreak: 0,
-    petType: 'cat',
-    theme: 'day',
     achievements: {
         unlocked: [],
         stats: {
             feeds: 0,
             plays: 0,
             pets: 0,
-            cleans: 0,
-            totalCoins: 1000,
-            dailyStreak: 0,
-            level: 1
+            totalCoins: 5000
         }
     },
     settings: {
         sound: true,
-        music: true,
         notifications: true
-    },
-    decor: {
-        active: []
     }
 };
 
 // DOM элементы
 const elements = {
-    // Основные элементы
     pet: document.getElementById('pet'),
     petEffects: document.getElementById('pet-effects'),
     level: document.getElementById('level'),
@@ -311,59 +193,36 @@ const elements = {
     hungerBar: document.getElementById('hunger-bar'),
     happinessBar: document.getElementById('happiness-bar'),
     energyBar: document.getElementById('energy-bar'),
-    hygieneBar: document.getElementById('hygiene-bar'),
     speechBubble: document.getElementById('speech-bubble'),
     notification: document.getElementById('notification'),
     effectsLayer: document.getElementById('effects-layer'),
-    
-    // Кнопки
     feedBtn: document.getElementById('feed-btn'),
     playBtn: document.getElementById('play-btn'),
     careBtn: document.getElementById('care-btn'),
     shopBtn: document.getElementById('shop-btn'),
     dailyBonusBtn: document.getElementById('daily-bonus-btn'),
     dailyTimer: document.getElementById('daily-timer'),
-    settingsBtn: document.getElementById('settings-btn'),
-    resetBtn: document.getElementById('reset-btn'),
-    soundToggle: document.getElementById('sound-toggle'),
-    musicToggle: document.getElementById('music-toggle'),
-    notificationsToggle: document.getElementById('notifications-toggle'),
-    petTypeSelect: document.getElementById('pet-type'),
-    themeSelect: document.getElementById('theme-select'),
-    
-    // Модальные окна
     shopModal: document.getElementById('shop-modal'),
-    settingsModal: document.getElementById('settings-modal'),
-    closeBtns: document.querySelectorAll('.close-btn'),
+    closeBtn: document.querySelector('.close-btn'),
     tabBtns: document.querySelectorAll('.tab-btn'),
     shopItems: {
         food: document.getElementById('food-items'),
         toys: document.getElementById('toys-items'),
-        decor: document.getElementById('decor-items'),
         premium: document.getElementById('premium-items')
     },
-    
-    // Достижения
     achievementPopup: document.getElementById('achievement-popup'),
-    achievementText: document.getElementById('achievement-text'),
-    achievementReward: document.querySelector('.achievement-reward'),
-    
-    // Аудио
-    backgroundMusic: document.getElementById('background-music')
+    achievementText: document.getElementById('achievement-text')
 };
 
 // Инициализация игры
 function initGame() {
     loadGame();
     setupEventListeners();
-    renderShopItems();
+    loadShopItems();
     startGameLoop();
     updatePetState();
     updateDailyBonusTimer();
-    updateTheme();
-    updateMusic();
     
-    // Приветственное сообщение
     setTimeout(() => {
         showSpeech("Привет! Я твой новый питомец!");
     }, 1000);
@@ -371,67 +230,27 @@ function initGame() {
 
 // Настройка обработчиков событий
 function setupEventListeners() {
-    // Основные действия
     elements.feedBtn.addEventListener('click', feed);
     elements.playBtn.addEventListener('click', play);
     elements.careBtn.addEventListener('click', care);
     elements.shopBtn.addEventListener('click', openShop);
-    elements.settingsBtn.addEventListener('click', openSettings);
-    
-    // Клик по питомцу
     elements.pet.addEventListener('click', pet);
-    elements.pet.addEventListener('touchstart', pet, { passive: true });
-    
-    // Магазин
-    elements.closeBtns.forEach(btn => {
-        btn.addEventListener('click', closeAllModals);
-    });
-    
+    elements.closeBtn.addEventListener('click', closeShop);
     elements.tabBtns.forEach(btn => {
         btn.addEventListener('click', () => switchShopTab(btn.dataset.tab));
     });
-    
-    // Ежедневный бонус
     elements.dailyBonusBtn.addEventListener('click', claimDailyBonus);
-    
-    // Настройки
-    elements.soundToggle.addEventListener('change', toggleSound);
-    elements.musicToggle.addEventListener('change', toggleMusic);
-    elements.notificationsToggle.addEventListener('change', toggleNotifications);
-    elements.resetBtn.addEventListener('click', resetGame);
-    elements.petTypeSelect.addEventListener('change', changePetType);
-    elements.themeSelect.addEventListener('change', changeTheme);
 }
 
 // Загрузка сохранений
 function loadGame() {
     const savedGame = localStorage.getItem('superPetGame');
     if (savedGame) {
-        try {
-            const parsedData = JSON.parse(savedGame);
-            
-            // Сохраняем настройки даже если они не были в сохранении
-            const settings = parsedData.settings || gameState.settings;
-            const theme = parsedData.theme || 'day';
-            const petType = parsedData.petType || 'cat';
-            
-            Object.assign(gameState, parsedData);
-            gameState.settings = settings;
-            gameState.theme = theme;
-            gameState.petType = petType;
-            
-            // Обновляем переключатели в настройках
-            elements.soundToggle.checked = gameState.settings.sound;
-            elements.musicToggle.checked = gameState.settings.music;
-            elements.notificationsToggle.checked = gameState.settings.notifications;
-            elements.petTypeSelect.value = gameState.petType;
-            elements.themeSelect.value = gameState.theme;
-            
-            updateUI();
-        } catch (e) {
-            console.error('Ошибка загрузки сохранения:', e);
-            resetGame();
-        }
+        const parsedData = JSON.parse(savedGame);
+        const settings = parsedData.settings || gameState.settings;
+        Object.assign(gameState, parsedData);
+        gameState.settings = settings;
+        updateUI();
     }
 }
 
@@ -452,7 +271,6 @@ function updateUI() {
     elements.hungerBar.style.width = `${gameState.stats.hunger}%`;
     elements.happinessBar.style.width = `${gameState.stats.happiness}%`;
     elements.energyBar.style.width = `${gameState.stats.energy}%`;
-    elements.hygieneBar.style.width = `${gameState.stats.hygiene}%`;
     
     saveGame();
 }
@@ -467,30 +285,18 @@ function updatePetState() {
     elements.pet.className = 'pet';
     elements.petEffects.style.backgroundImage = '';
     
-    // Устанавливаем правильное изображение питомца
-    const petImage = getPetImage();
-    elements.pet.style.backgroundImage = `url('assets/images/pets/${gameState.petType}/${petImage}.png')`;
-    
-    if (gameState.stats.hygiene < 30) {
-        elements.pet.classList.add('dirty');
-    } else if (gameState.stats.hunger < 30 || gameState.stats.happiness < 30) {
-        elements.pet.classList.add('sad');
+    if (gameState.stats.hunger < 30 || gameState.stats.happiness < 30) {
+        elements.pet.style.backgroundImage = "url('images/pet/hungry.png')";
     } else if (gameState.stats.energy < 30) {
-        elements.pet.classList.add('tired');
+        elements.pet.style.backgroundImage = "url('images/pet/sleep.png')";
     } else if (gameState.stats.happiness > 70) {
-        elements.pet.classList.add('happy');
-        elements.petEffects.style.backgroundImage = "url('assets/images/effects/glow.png')";
+        elements.pet.style.backgroundImage = "url('images/pet/happy.png')";
+        elements.pet.classList.add('pet-happy');
+        elements.petEffects.style.backgroundImage = "url('images/effects/glow.png')";
     } else {
-        elements.pet.classList.add('idle');
+        elements.pet.style.backgroundImage = "url('images/pet/idle.png')";
+        elements.pet.classList.add('pet-idle');
     }
-}
-
-function getPetImage() {
-    if (gameState.stats.hygiene < 30) return 'dirty';
-    if (gameState.stats.hunger < 30 || gameState.stats.happiness < 30) return 'hungry';
-    if (gameState.stats.energy < 30) return 'sleep';
-    if (gameState.stats.happiness > 70) return 'happy';
-    return 'idle';
 }
 
 // Игровой цикл
@@ -499,7 +305,6 @@ function startGameLoop() {
         const now = Date.now();
         const minutesPassed = (now - gameState.lastAction) / (1000 * 60);
         
-        // Уменьшение параметров
         gameState.stats.hunger = Math.max(
             0, 
             gameState.stats.hunger - (CONFIG.STATS.HUNGER_DECREASE * minutesPassed)
@@ -515,32 +320,16 @@ function startGameLoop() {
             gameState.stats.energy - (CONFIG.STATS.ENERGY_DECREASE * minutesPassed)
         );
         
-        gameState.stats.hygiene = Math.max(
-            0, 
-            gameState.stats.hygiene - (CONFIG.STATS.HYGIENE_DECREASE * minutesPassed)
-        );
-        
         gameState.lastAction = now;
         updateUI();
         updatePetState();
         
-        // Случайные сообщения
         if (Math.random() > 0.95) {
             showRandomMessage();
         }
         
-        // Обновление таймера ежедневного бонуса
         updateDailyBonusTimer();
-    }, 60000); // Каждую минуту
-    
-    // Анимация питомца
-    setInterval(() => {
-        if (gameState.stats.happiness > 70 && gameState.stats.energy > 30) {
-            elements.pet.style.animation = 'pet-happy 2s infinite';
-        } else if (gameState.stats.energy > 30) {
-            elements.pet.style.animation = 'pet-idle 3s infinite';
-        }
-    }, 100);
+    }, 60000);
 }
 
 // Основные действия
@@ -551,7 +340,6 @@ function feed() {
         return;
     }
     
-    // Проверка на спам
     const now = Date.now();
     if (now - gameState.lastFeed < 3000) return;
     gameState.lastFeed = now;
@@ -565,14 +353,9 @@ function feed() {
         CONFIG.STATS.MAX, 
         gameState.stats.happiness + 5
     );
-    gameState.stats.hygiene = Math.max(
-        0, 
-        gameState.stats.hygiene - 5
-    );
     gameState.lastAction = now;
     gameState.achievements.stats.feeds++;
     
-    // Анимация
     animatePet('eating');
     createHeartsEffect(3);
     createSparkleEffect();
@@ -592,18 +375,10 @@ function play() {
         return;
     }
     
-    if (gameState.inventory.toys <= 0) {
-        showNotification("Нет игрушек! Купите в магазине");
-        playSound('notification.mp3');
-        return;
-    }
-    
-    // Проверка на спам
     const now = Date.now();
     if (now - gameState.lastPlay < 5000) return;
     gameState.lastPlay = now;
     
-    gameState.inventory.toys--;
     gameState.stats.happiness = Math.min(
         CONFIG.STATS.MAX, 
         gameState.stats.happiness + CONFIG.STATS.PLAY_AMOUNT
@@ -616,14 +391,9 @@ function play() {
         0, 
         gameState.stats.hunger - 10
     );
-    gameState.stats.hygiene = Math.max(
-        0, 
-        gameState.stats.hygiene - 10
-    );
     gameState.lastAction = now;
     gameState.achievements.stats.plays++;
     
-    // Анимация
     animatePet('playing');
     createHeartsEffect(8);
     createSparkleEffect(5);
@@ -637,11 +407,6 @@ function play() {
 }
 
 function care() {
-    if (gameState.stats.hygiene < 30) {
-        clean();
-        return;
-    }
-    
     gameState.stats.energy = Math.min(
         CONFIG.STATS.MAX, 
         gameState.stats.energy + CONFIG.STATS.CARE_AMOUNT
@@ -652,7 +417,6 @@ function care() {
     );
     gameState.lastAction = Date.now();
     
-    // Анимация
     animatePet('sleeping');
     createSparkleEffect(3);
     
@@ -667,39 +431,6 @@ function care() {
     playSound('sleep.mp3');
 }
 
-function clean() {
-    // Проверка на спам
-    const now = Date.now();
-    if (now - gameState.lastClean < 5000) return;
-    gameState.lastClean = now;
-    
-    gameState.stats.hygiene = Math.min(
-        CONFIG.STATS.MAX, 
-        gameState.stats.hygiene + CONFIG.STATS.CLEAN_AMOUNT
-    );
-    gameState.stats.happiness = Math.min(
-        CONFIG.STATS.MAX, 
-        gameState.stats.happiness + 5
-    );
-    gameState.stats.energy = Math.max(
-        0, 
-        gameState.stats.energy - 5
-    );
-    gameState.lastAction = now;
-    gameState.achievements.stats.cleans++;
-    
-    // Анимация
-    animatePet('cleaning');
-    createSparkleEffect(5);
-    
-    addXP(CONFIG.XP.PER_ACTION);
-    showSpeech("Теперь я чистый!");
-    updateUI();
-    updatePetState();
-    checkAchievements();
-    playSound('clean.mp3');
-}
-
 function pet() {
     gameState.stats.happiness = Math.min(
         CONFIG.STATS.MAX, 
@@ -708,7 +439,6 @@ function pet() {
     gameState.achievements.stats.pets++;
     gameState.lastAction = Date.now();
     
-    // Анимация
     elements.pet.style.transform = 'scale(1.1)';
     setTimeout(() => {
         elements.pet.style.transform = '';
@@ -719,7 +449,7 @@ function pet() {
     updateUI();
     updatePetState();
     checkAchievements();
-    playSound('pet.mp3');
+    playSound('click.mp3');
 }
 
 // Анимации питомца
@@ -741,22 +471,16 @@ function animatePet(action) {
             
         case 'sleeping':
             const originalBg = elements.pet.style.backgroundImage;
-            elements.pet.style.backgroundImage = `url('assets/images/pets/${gameState.petType}/sleep.png')`;
+            elements.pet.style.backgroundImage = "url('images/pet/sleep.png')";
             setTimeout(() => {
                 elements.pet.style.backgroundImage = originalBg;
             }, 2000);
-            break;
-            
-        case 'cleaning':
-            elements.pet.style.animation = 'none';
-            void elements.pet.offsetWidth; // Trigger reflow
-            elements.pet.style.animation = 'pet-happy 0.5s 3';
             break;
     }
 }
 
 // Магазин
-function renderShopItems() {
+function loadShopItems() {
     for (const category in CONFIG.SHOP_ITEMS) {
         elements.shopItems[category].innerHTML = '';
         
@@ -766,10 +490,10 @@ function renderShopItems() {
             
             const priceDisplay = item.priceType === 'real' 
                 ? `$${item.price}` 
-                : `<img src="assets/images/ui/${item.priceType}.png"><span>${item.price}</span>`;
+                : `<img src="images/ui/${item.priceType}.png"><span>${item.price}</span>`;
             
             itemElement.innerHTML = `
-                <img src="${item.image}" alt="${item.name}">
+                <img src="images/items/${item.image}" alt="${item.name}">
                 <h3>${item.name}</h3>
                 <p>${item.description}</p>
                 <div class="price">${priceDisplay}</div>
@@ -787,15 +511,8 @@ function openShop() {
     playSound('click.mp3');
 }
 
-function openSettings() {
-    elements.settingsModal.style.display = 'flex';
-    playSound('click.mp3');
-}
-
-function closeAllModals() {
-    document.querySelectorAll('.modal').forEach(modal => {
-        modal.style.display = 'none';
-    });
+function closeShop() {
+    elements.shopModal.style.display = 'none';
     playSound('click.mp3');
 }
 
@@ -813,7 +530,6 @@ function switchShopTab(tabName) {
 
 function buyItem(item) {
     if (item.priceType === 'real') {
-        // Имитация реальной покупки
         showNotification(`Покупка успешна! Получено: ${item.effect.gems ? item.effect.gems + ' кристаллов' : ''} ${item.effect.coins ? item.effect.coins + ' монет' : ''}`);
         
         if (item.effect.gems) {
@@ -826,42 +542,20 @@ function buyItem(item) {
             createCoinsEffect(item.effect.coins, 0);
         }
     } else {
-        // Проверка баланса
         if (gameState[item.priceType] < item.price) {
             showNotification(`Недостаточно ${item.priceType === 'coins' ? 'монет' : 'кристаллов'}!`);
             playSound('notification.mp3');
             return;
         }
         
-        // Списание средств
         gameState[item.priceType] -= item.price;
-        gameState.achievements.stats.totalCoins -= item.priceType === 'coins' ? item.price : 0;
         
-        // Применение эффекта
-        if (item.effect.hunger) {
-            gameState.stats.hunger = Math.min(CONFIG.STATS.MAX, gameState.stats.hunger + item.effect.hunger);
-        }
-        if (item.effect.happiness) {
-            gameState.stats.happiness = Math.min(CONFIG.STATS.MAX, gameState.stats.happiness + item.effect.happiness);
-        }
-        if (item.effect.energy) {
-            gameState.stats.energy = Math.min(CONFIG.STATS.MAX, gameState.stats.energy + item.effect.energy);
-        }
-        if (item.effect.hygiene) {
-            gameState.stats.hygiene = Math.min(CONFIG.STATS.MAX, gameState.stats.hygiene + item.effect.hygiene);
-        }
-        
-        // Добавление в инвентарь
         if (item.id.includes('food')) {
             gameState.inventory.food++;
         } else if (item.id.includes('toy')) {
             gameState.inventory.toys++;
-        } else if (item.id.includes('decor')) {
-            gameState.inventory.decor++;
-            gameState.decor.active.push(item.id);
         }
         
-        // Эффекты
         createCoinsEffect(
             item.priceType === 'coins' ? -item.price : 0,
             item.priceType === 'gems' ? -item.price : 0
@@ -871,132 +565,8 @@ function buyItem(item) {
     }
     
     updateUI();
-    updatePetState();
     checkAchievements();
     playSound('win.mp3');
-}
-
-// Настройки
-function toggleSound() {
-    gameState.settings.sound = elements.soundToggle.checked;
-    saveGame();
-}
-
-function toggleMusic() {
-    gameState.settings.music = elements.musicToggle.checked;
-    updateMusic();
-    saveGame();
-}
-
-function updateMusic() {
-    if (gameState.settings.music) {
-        elements.backgroundMusic.volume = 0.3;
-        elements.backgroundMusic.play().catch(e => console.log("Автовоспроизведение заблокировано"));
-    } else {
-        elements.backgroundMusic.pause();
-    }
-}
-
-function toggleNotifications() {
-    gameState.settings.notifications = elements.notificationsToggle.checked;
-    saveGame();
-}
-
-function changePetType() {
-    gameState.petType = elements.petTypeSelect.value;
-    updatePetState();
-    saveGame();
-}
-
-function changeTheme() {
-    gameState.theme = elements.themeSelect.value;
-    updateTheme();
-    saveGame();
-}
-
-function updateTheme() {
-    // Удаляем все классы тем
-    document.body.classList.remove('night-theme', 'space-theme');
-    
-    // Добавляем нужный класс
-    if (gameState.theme === 'night') {
-        document.body.classList.add('night-theme');
-        elements.backgroundMusic.src = 'assets/sounds/ambient/night.mp3';
-    } else if (gameState.theme === 'space') {
-        document.body.classList.add('space-theme');
-        elements.backgroundMusic.src = 'assets/sounds/ambient/day.mp3';
-    } else {
-        elements.backgroundMusic.src = 'assets/sounds/ambient/day.mp3';
-    }
-    
-    if (gameState.settings.music) {
-        elements.backgroundMusic.play().catch(e => console.log("Автовоспроизведение заблокировано"));
-    }
-}
-
-function resetGame() {
-    if (confirm('Вы уверены, что хотите сбросить весь прогресс? Это действие нельзя отменить.')) {
-        localStorage.removeItem('superPetGame');
-        
-        // Сброс состояния игры
-        gameState.stats = {
-            hunger: 80,
-            happiness: 70,
-            energy: 90,
-            hygiene: 85
-        };
-        gameState.level = 1;
-        gameState.xp = 0;
-        gameState.coins = 1000;
-        gameState.gems = 10;
-        gameState.inventory = {
-            food: 5,
-            toys: 2,
-            decor: 0
-        };
-        gameState.lastAction = Date.now();
-        gameState.lastPlay = 0;
-        gameState.lastFeed = 0;
-        gameState.lastClean = 0;
-        gameState.lastDailyBonus = 0;
-        gameState.dailyStreak = 0;
-        gameState.petType = 'cat';
-        gameState.theme = 'day';
-        gameState.achievements = {
-            unlocked: [],
-            stats: {
-                feeds: 0,
-                plays: 0,
-                pets: 0,
-                cleans: 0,
-                totalCoins: 1000,
-                dailyStreak: 0,
-                level: 1
-            }
-        };
-        gameState.settings = {
-            sound: true,
-            music: true,
-            notifications: true
-        };
-        gameState.decor = {
-            active: []
-        };
-        
-        // Обновление UI
-        elements.soundToggle.checked = true;
-        elements.musicToggle.checked = true;
-        elements.notificationsToggle.checked = true;
-        elements.petTypeSelect.value = 'cat';
-        elements.themeSelect.value = 'day';
-        updateUI();
-        updatePetState();
-        updateTheme();
-        updateMusic();
-        
-        showNotification("Игра сброшена!");
-        playSound('notification.mp3');
-    }
 }
 
 // Ежедневный бонус
@@ -1013,37 +583,18 @@ function updateDailyBonusTimer() {
     
     elements.dailyTimer.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     
-    // Проверка доступности бонуса
     const lastBonusDate = new Date(gameState.lastDailyBonus);
     const today = new Date();
     
-    // Проверка на новый день
     if (lastBonusDate.getDate() !== today.getDate() || 
         lastBonusDate.getMonth() !== today.getMonth() || 
         lastBonusDate.getFullYear() !== today.getFullYear()) {
-        
-        // Проверка на последовательные дни
-        const yesterday = new Date(today);
-        yesterday.setDate(yesterday.getDate() - 1);
-        
-        if (lastBonusDate.getDate() === yesterday.getDate() && 
-            lastBonusDate.getMonth() === yesterday.getMonth() && 
-            lastBonusDate.getFullYear() === yesterday.getFullYear()) {
-            gameState.achievements.stats.dailyStreak++;
-            gameState.dailyStreak++;
-        } else {
-            gameState.achievements.stats.dailyStreak = 0;
-            gameState.dailyStreak = 0;
-        }
-        
         elements.dailyBonusBtn.disabled = false;
         elements.dailyBonusBtn.style.opacity = '1';
     } else {
         elements.dailyBonusBtn.disabled = true;
         elements.dailyBonusBtn.style.opacity = '0.7';
     }
-    
-    checkAchievements();
 }
 
 function claimDailyBonus() {
@@ -1062,12 +613,7 @@ function claimDailyBonus() {
     gameState.achievements.stats.totalCoins += CONFIG.REWARDS.DAILY_BONUS;
     gameState.lastDailyBonus = Date.now();
     
-    let bonusMessage = `Ежедневный бонус: +${CONFIG.REWARDS.DAILY_BONUS} монет!`;
-    if (gameState.dailyStreak > 0) {
-        bonusMessage += ` (Стрик: ${gameState.dailyStreak} дней)`;
-    }
-    
-    showNotification(bonusMessage);
+    showNotification(`Ежедневный бонус: +${CONFIG.REWARDS.DAILY_BONUS} монет!`);
     createCoinsEffect(CONFIG.REWARDS.DAILY_BONUS, 0);
     updateUI();
     updateDailyBonusTimer();
@@ -1082,7 +628,6 @@ function addXP(amount) {
     
     if (gameState.xp >= xpToLevel) {
         gameState.level++;
-        gameState.achievements.stats.level = gameState.level;
         gameState.coins += CONFIG.REWARDS.LEVEL_UP_COINS;
         gameState.gems += CONFIG.REWARDS.LEVEL_UP_GEMS;
         gameState.achievements.stats.totalCoins += CONFIG.REWARDS.LEVEL_UP_COINS;
@@ -1090,7 +635,6 @@ function addXP(amount) {
         
         showNotification(`🎉 Уровень ${gameState.level}! +${CONFIG.REWARDS.LEVEL_UP_COINS} монет и +${CONFIG.REWARDS.LEVEL_UP_GEMS} кристаллов`);
         createCoinsEffect(CONFIG.REWARDS.LEVEL_UP_COINS, CONFIG.REWARDS.LEVEL_UP_GEMS);
-        createConfettiEffect(10);
         checkAchievements();
         playSound('win.mp3');
     }
@@ -1105,14 +649,8 @@ function checkAchievements() {
             achievement.condition(gameState.achievements.stats)) {
             
             gameState.achievements.unlocked.push(achievement.id);
-            
-            if (achievement.reward.coins) {
-                gameState.coins += achievement.reward.coins;
-                gameState.achievements.stats.totalCoins += achievement.reward.coins;
-            }
-            if (achievement.reward.gems) {
-                gameState.gems += achievement.reward.gems;
-            }
+            gameState.coins += achievement.reward;
+            gameState.achievements.stats.totalCoins += achievement.reward;
             
             showAchievement(achievement.name, achievement.description, achievement.reward);
         }
@@ -1120,18 +658,7 @@ function checkAchievements() {
 }
 
 function showAchievement(name, description, reward) {
-    elements.achievementText.textContent = `${name}: ${description}`;
-    
-    let rewardText = '';
-    if (reward.coins) {
-        rewardText += `+${reward.coins} <img src="assets/images/ui/coin.png" style="width:16px;height:16px;">`;
-    }
-    if (reward.gems) {
-        if (rewardText) rewardText += ' ';
-        rewardText += `+${reward.gems} <img src="assets/images/ui/gem.png" style="width:16px;height:16px;">`;
-    }
-    
-    elements.achievementReward.innerHTML = rewardText;
+    elements.achievementText.textContent = `${name}: ${description} (+${reward} монет)`;
     elements.achievementPopup.style.bottom = '20px';
     
     setTimeout(() => {
@@ -1168,20 +695,6 @@ function createSparkleEffect(count = 3) {
             
             setTimeout(() => sparkle.remove(), 1500);
         }, i * 300);
-    }
-}
-
-function createConfettiEffect(count = 5) {
-    for (let i = 0; i < count; i++) {
-        setTimeout(() => {
-            const confetti = document.createElement('div');
-            confetti.className = 'confetti-effect';
-            confetti.style.left = `${20 + Math.random() * 60}%`;
-            confetti.style.top = `${20 + Math.random() * 60}%`;
-            elements.effectsLayer.appendChild(confetti);
-            
-            setTimeout(() => confetti.remove(), 2000);
-        }, i * 200);
     }
 }
 
@@ -1228,9 +741,7 @@ function showRandomMessage() {
     
     let messages;
     
-    if (gameState.stats.hygiene < 30) {
-        messages = CONFIG.MESSAGES.DIRTY;
-    } else if (gameState.stats.hunger < 30) {
+    if (gameState.stats.hunger < 30) {
         messages = CONFIG.MESSAGES.HUNGRY;
     } else if (gameState.stats.energy < 30) {
         messages = CONFIG.MESSAGES.TIRED;
@@ -1259,7 +770,7 @@ function showNotification(text) {
 function playSound(soundFile) {
     if (!gameState.settings.sound) return;
     
-    const audio = new Audio(`assets/sounds/ui/${soundFile}`);
+    const audio = new Audio(`sounds/${soundFile}`);
     audio.volume = 0.3;
     audio.play().catch(e => console.log("Автовоспроизведение заблокировано"));
 }
