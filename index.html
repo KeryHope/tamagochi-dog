@@ -6,12 +6,13 @@
     <title>SuperPet - Виртуальный питомец</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
 </head>
 <body>
     <div class="game-container">
+        <!-- Фон игры -->
         <div class="game-background"></div>
         
+        <!-- Верхняя панель с прогрессом -->
         <div class="top-panel">
             <div class="player-info">
                 <div class="level-container">
@@ -21,7 +22,6 @@
                         <div id="xp-progress" class="xp-progress"></div>
                     </div>
                 </div>
-                <button id="settings-btn" class="icon-btn">⚙️</button>
             </div>
             
             <div class="currency-container">
@@ -36,6 +36,7 @@
             </div>
         </div>
 
+        <!-- Основная игровая зона -->
         <div class="game-area">
             <div class="pet-container">
                 <div id="pet" class="pet"></div>
@@ -65,6 +66,7 @@
             </div>
         </div>
 
+        <!-- Панель действий -->
         <div class="action-panel">
             <button id="feed-btn" class="action-btn pulse">
                 <img src="images/ui/food-icon.png" alt="Кормить">
@@ -96,14 +98,12 @@
                     <button class="tab-btn active" data-tab="food">Еда</button>
                     <button class="tab-btn" data-tab="toys">Игрушки</button>
                     <button class="tab-btn premium" data-tab="premium">Премиум</button>
-                    <button class="tab-btn" data-tab="customize">Внешность</button>
                 </div>
                 
                 <div class="shop-items-container">
                     <div class="shop-items" id="food-items"></div>
                     <div class="shop-items hidden" id="toys-items"></div>
                     <div class="shop-items hidden" id="premium-items"></div>
-                    <div class="shop-items hidden" id="customize-items"></div>
                 </div>
                 
                 <div class="daily-bonus-container">
@@ -112,62 +112,17 @@
                         <span>Получить +100 монет</span>
                         <div class="timer" id="daily-timer">23:59:59</div>
                     </button>
-                    <div id="tg-share-btn" class="telegram-btn hidden">
-                        <img src="https://telegram.org/img/t_logo.png" alt="TG">
-                        <span>Поделиться</span>
-                    </div>
                 </div>
             </div>
         </div>
 
-        <div id="settings-modal" class="modal">
-            <div class="modal-container small">
-                <div class="modal-header">
-                    <h2>НАСТРОЙКИ</h2>
-                    <button class="close-btn">&times;</button>
-                </div>
-                
-                <div class="settings-options">
-                    <div class="setting">
-                        <span>Звуки</span>
-                        <label class="switch">
-                            <input type="checkbox" id="sound-toggle" checked>
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    <div class="setting">
-                        <span>Уведомления</span>
-                        <label class="switch">
-                            <input type="checkbox" id="notifications-toggle" checked>
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    <button id="save-btn" class="action-btn">Сохранить</button>
-                    <button id="reset-btn" class="action-btn danger">Сбросить прогресс</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="minigame-modal" class="modal">
-            <div class="modal-container small">
-                <div class="modal-header">
-                    <h2>ПОЙМАЙ МЫШКУ</h2>
-                    <button class="close-btn">&times;</button>
-                </div>
-                
-                <div class="minigame-area">
-                    <div id="minigame-container"></div>
-                    <div class="minigame-stats">
-                        <span>Очки: <span id="score">0</span></span>
-                        <span>Время: <span id="time">30</span>с</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        <!-- Эффекты -->
         <div id="effects-layer"></div>
+        
+        <!-- Уведомления -->
         <div id="notification" class="notification"></div>
         
+        <!-- Достижения -->
         <div id="achievement-popup" class="achievement-popup">
             <div class="achievement-badge">🏆</div>
             <div class="achievement-content">
