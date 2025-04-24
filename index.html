@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#FF6B35">
-    <meta name="description" content="SuperPet - виртуальный питомец с продвинутыми возможностями">
     <title>SuperPet - Виртуальный питомец</title>
-    <link rel="manifest" href="manifest.json">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="assets/images/ui/food-icon.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1A1A2E">
 </head>
 <body>
     <div class="game-container">
@@ -24,22 +22,16 @@
                         <div id="xp-progress" class="xp-progress"></div>
                     </div>
                 </div>
-                <div class="pet-selector">
-                    <select id="pet-type">
-                        <option value="cat">Кошка</option>
-                        <option value="dog">Собака</option>
-                    </select>
-                </div>
             </div>
             
             <div class="currency-container">
                 <div class="coins-box">
-                    <img src="assets/images/ui/coin.png" alt="Монеты">
-                    <span id="coins">1000</span>
+                    <img src="images/ui/coin.png" alt="Монеты">
+                    <span id="coins">5000</span>
                 </div>
                 <div class="gems-box">
-                    <img src="assets/images/ui/gem.png" alt="Кристаллы">
-                    <span id="gems">10</span>
+                    <img src="images/ui/gem.png" alt="Кристаллы">
+                    <span id="gems">25</span>
                 </div>
             </div>
         </div>
@@ -70,30 +62,24 @@
                         <div id="energy-bar" class="stat-fill"></div>
                     </div>
                 </div>
-                <div class="stat-bar">
-                    <div class="stat-icon hygiene-icon"></div>
-                    <div class="stat-progress">
-                        <div id="hygiene-bar" class="stat-fill"></div>
-                    </div>
-                </div>
             </div>
         </div>
 
         <div class="action-panel">
             <button id="feed-btn" class="action-btn pulse">
-                <img src="assets/images/ui/food-icon.png" alt="Кормить">
+                <img src="images/ui/food-icon.png" alt="Кормить">
                 <span>Кормить</span>
             </button>
             <button id="play-btn" class="action-btn pulse">
-                <img src="assets/images/ui/game-icon.png" alt="Играть">
+                <img src="images/ui/game-icon.png" alt="Играть">
                 <span>Играть</span>
             </button>
             <button id="care-btn" class="action-btn pulse">
-                <img src="assets/images/ui/care-icon.png" alt="Уход">
+                <img src="images/ui/care-icon.png" alt="Уход">
                 <span>Уход</span>
             </button>
             <button id="shop-btn" class="action-btn premium pulse">
-                <img src="assets/images/ui/shop-icon.png" alt="Магазин">
+                <img src="images/ui/shop-icon.png" alt="Магазин">
                 <span>Магазин</span>
             </button>
         </div>
@@ -108,14 +94,12 @@
                 <div class="shop-tabs">
                     <button class="tab-btn active" data-tab="food">Еда</button>
                     <button class="tab-btn" data-tab="toys">Игрушки</button>
-                    <button class="tab-btn" data-tab="decor">Декор</button>
                     <button class="tab-btn premium" data-tab="premium">Премиум</button>
                 </div>
                 
                 <div class="shop-items-container">
                     <div class="shop-items" id="food-items"></div>
                     <div class="shop-items hidden" id="toys-items"></div>
-                    <div class="shop-items hidden" id="decor-items"></div>
                     <div class="shop-items hidden" id="premium-items"></div>
                 </div>
                 
@@ -129,48 +113,6 @@
             </div>
         </div>
 
-        <div id="settings-modal" class="modal">
-            <div class="modal-container">
-                <div class="modal-header">
-                    <h2>НАСТРОЙКИ</h2>
-                    <button class="close-btn">&times;</button>
-                </div>
-                
-                <div class="settings-options">
-                    <div class="setting">
-                        <label>
-                            <input type="checkbox" id="sound-toggle" checked>
-                            <span>Звук</span>
-                        </label>
-                    </div>
-                    <div class="setting">
-                        <label>
-                            <input type="checkbox" id="music-toggle" checked>
-                            <span>Музыка</span>
-                        </label>
-                    </div>
-                    <div class="setting">
-                        <label>
-                            <input type="checkbox" id="notifications-toggle" checked>
-                            <span>Уведомления</span>
-                        </label>
-                    </div>
-                    <div class="setting">
-                        <label>
-                            <select id="theme-select">
-                                <option value="day">Дневная тема</option>
-                                <option value="night">Ночная тема</option>
-                                <option value="space">Космос</option>
-                            </select>
-                        </label>
-                    </div>
-                    <button id="reset-btn" class="reset-btn">Сбросить прогресс</button>
-                </div>
-            </div>
-        </div>
-
-        <button id="settings-btn" class="settings-btn">⚙️</button>
-        
         <div id="effects-layer"></div>
         <div id="notification" class="notification"></div>
         
@@ -179,27 +121,17 @@
             <div class="achievement-content">
                 <h3>Достижение!</h3>
                 <p id="achievement-text">Новое достижение</p>
-                <div class="achievement-reward"></div>
             </div>
         </div>
     </div>
 
-    <audio id="background-music" loop>
-        <source src="assets/sounds/ambient/day.mp3" type="audio/mpeg">
-    </audio>
-
     <script src="script.js"></script>
     <script>
-        // Регистрация Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('service-worker.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registration successful');
-                    })
-                    .catch(err => {
-                        console.log('ServiceWorker registration failed: ', err);
-                    });
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => console.log('SW registered'))
+                    .catch(err => console.log('SW registration failed'));
             });
         }
     </script>
