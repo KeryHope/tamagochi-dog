@@ -3,154 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#FF6B35">
-    <meta name="description" content="SuperPet - виртуальный питомец с продвинутыми возможностями">
     <title>SuperPet - Виртуальный питомец</title>
-    <link rel="manifest" href="manifest.json">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* Основные стили будут в style.css */
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+    </style>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="assets/images/ui/food-icon.png">
 </head>
 <body>
-    <div class="game-container">
-        <div class="game-background"></div>
-        
-        <div class="top-panel">
-            <div class="player-info">
-                <div class="level-container">
-                    <div class="level-icon">LVL</div>
-                    <span id="level">1</span>
-                    <div class="xp-bar">
-                        <div id="xp-progress" class="xp-progress"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="currency-container">
-                <div class="coins-box">
-                    <img src="assets/images/ui/coin.png" alt="Монеты">
-                    <span id="coins">5000</span>
-                </div>
-                <div class="gems-box">
-                    <img src="assets/images/ui/gem.png" alt="Кристаллы">
-                    <span id="gems">25</span>
-                </div>
-            </div>
-        </div>
+    <div id="loader" class="loader">
+        <div class="spinner"></div>
+    </div>
 
-        <div class="game-area">
+    <div id="app" class="app-container" style="display: none;">
+        <!-- Шапка с балансом TON -->
+        <header class="app-header">
+            <div class="wallet-balance" id="wallet-balance">
+                <img src="assets/toncoin.svg" alt="TON">
+                <span id="ton-amount">0</span>
+            </div>
+            <h1 id="pet-name-header">Мой питомец</h1>
+            <button id="settings-btn" class="icon-btn">⚙️</button>
+        </header>
+
+        <!-- Основное игровое поле -->
+        <main class="game-area">
             <div class="pet-container">
                 <div id="pet" class="pet"></div>
-                <div id="pet-effects" class="pet-effects"></div>
-                <div id="speech-bubble" class="speech-bubble"></div>
+                <div id="pet-status" class="pet-status"></div>
             </div>
             
             <div class="stats-container">
                 <div class="stat-bar">
-                    <div class="stat-icon hunger-icon"></div>
-                    <div class="stat-progress">
-                        <div id="hunger-bar" class="stat-fill"></div>
+                    <span>🍗 Сытость</span>
+                    <div class="progress-bar">
+                        <div id="hunger-bar" class="progress-fill"></div>
                     </div>
                 </div>
                 <div class="stat-bar">
-                    <div class="stat-icon happiness-icon"></div>
-                    <div class="stat-progress">
-                        <div id="happiness-bar" class="stat-fill"></div>
+                    <span>😊 Настроение</span>
+                    <div class="progress-bar">
+                        <div id="happiness-bar" class="progress-fill"></div>
                     </div>
                 </div>
                 <div class="stat-bar">
-                    <div class="stat-icon energy-icon"></div>
-                    <div class="stat-progress">
-                        <div id="energy-bar" class="stat-fill"></div>
+                    <span>⚡ Энергия</span>
+                    <div class="progress-bar">
+                        <div id="energy-bar" class="progress-fill"></div>
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
 
-        <div class="action-panel">
-            <button id="feed-btn" class="action-btn pulse">
-                <img src="assets/images/ui/food-icon.png" alt="Кормить">
+        <!-- Панель действий -->
+        <nav class="action-bar">
+            <button id="feed-btn" class="action-btn">
+                <img src="assets/food-icon.svg" alt="Кормить">
                 <span>Кормить</span>
             </button>
-            <button id="play-btn" class="action-btn pulse">
-                <img src="assets/images/ui/game-icon.png" alt="Играть">
+            <button id="play-btn" class="action-btn">
+                <img src="assets/play-icon.svg" alt="Играть">
                 <span>Играть</span>
             </button>
-            <button id="care-btn" class="action-btn pulse">
-                <img src="assets/images/ui/care-icon.png" alt="Уход">
+            <button id="care-btn" class="action-btn">
+                <img src="assets/care-icon.svg" alt="Уход">
                 <span>Уход</span>
             </button>
-            <button id="shop-btn" class="action-btn premium pulse">
-                <img src="assets/images/ui/shop-icon.png" alt="Магазин">
+            <button id="shop-btn" class="action-btn">
+                <img src="assets/shop-icon.svg" alt="Магазин">
                 <span>Магазин</span>
             </button>
-        </div>
+        </nav>
 
+        <!-- Модальные окна -->
         <div id="shop-modal" class="modal">
-            <div class="modal-container">
-                <div class="modal-header">
-                    <h2>МАГАЗИН</h2>
-                    <button class="close-btn">&times;</button>
-                </div>
-                
-                <div class="shop-tabs">
-                    <button class="tab-btn active" data-tab="food">Еда</button>
-                    <button class="tab-btn" data-tab="toys">Игрушки</button>
-                    <button class="tab-btn premium" data-tab="premium">Премиум</button>
-                </div>
-                
-                <div class="shop-items-container">
-                    <div class="shop-items" id="food-items"></div>
-                    <div class="shop-items hidden" id="toys-items"></div>
-                    <div class="shop-items hidden" id="premium-items"></div>
-                </div>
-                
-                <div class="daily-bonus-container">
-                    <h3>Ежедневный бонус</h3>
-                    <button id="daily-bonus-btn" class="bonus-btn">
-                        <span>Получить +100 монет</span>
-                        <div class="timer" id="daily-timer">23:59:59</div>
-                    </button>
-                </div>
+            <div class="modal-content">
+                <h2>Магазин</h2>
+                <div class="shop-items" id="shop-items"></div>
+                <button class="close-btn">✕</button>
             </div>
         </div>
 
-        <div id="settings-modal" class="modal">
-            <div class="modal-container">
-                <div class="modal-header">
-                    <h2>НАСТРОЙКИ</h2>
-                    <button class="close-btn">&times;</button>
-                </div>
-                
-                <div class="settings-options">
-                    <div class="setting">
-                        <label>
-                            <input type="checkbox" id="sound-toggle" checked>
-                            <span>Звук</span>
-                        </label>
-                    </div>
-                    <div class="setting">
-                        <label>
-                            <input type="checkbox" id="notifications-toggle" checked>
-                            <span>Уведомления</span>
-                        </label>
-                    </div>
-                    <button id="reset-btn" class="reset-btn">Сбросить прогресс</button>
-                </div>
-            </div>
-        </div>
-
-        <button id="settings-btn" class="settings-btn">⚙️</button>
-        
-        <div id="effects-layer"></div>
-        <div id="notification" class="notification"></div>
-        
-        <div id="achievement-popup" class="achievement-popup">
-            <div class="achievement-badge">🏆</div>
-            <div class="achievement-content">
-                <h3>Достижение!</h3>
-                <p id="achievement-text">Новое достижение</p>
-            </div>
+        <div id="inventory-modal" class="modal">
+            <!-- ... -->
         </div>
     </div>
 
