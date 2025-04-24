@@ -5,7 +5,729 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SuperPet - Виртуальный питомец</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --secondary: #00A6FB;
+            --accent: #FFD166;
+            --dark: #2D3047;
+            --light: #F7F7FF;
+            --premium: #9B5DE5;
+            
+            --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.3);
+            
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+            user-select: none;
+        }
+
+        body {
+            overflow: hidden;
+            background: #1A1A2E;
+            color: white;
+        }
+
+        .game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            max-width: 450px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .game-background {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            z-index: 0;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .top-panel {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            z-index: 10;
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .level-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 12px;
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .level-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--dark);
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .level-container span {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .xp-bar {
+            width: 80px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .xp-progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent), #FF9F1C);
+            transition: var(--transition);
+        }
+
+        .currency-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .coins-box, .gems-box {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .coins-box {
+            background: linear-gradient(90deg, #FF9F1C, #FFD166);
+        }
+
+        .gems-box {
+            background: linear-gradient(90deg, #00A6FB, #00C2FF);
+        }
+
+        .coins-box img, .gems-box img {
+            width: 18px;
+            height: 18px;
+        }
+
+        .game-area {
+            position: relative;
+            height: 55vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 5;
+        }
+
+        .pet-container {
+            position: relative;
+            width: 100%;
+            height: 70%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pet {
+            width: 220px;
+            height: 220px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23FFD166"/><circle cx="35" cy="40" r="5" fill="%232D3047"/><circle cx="65" cy="40" r="5" fill="%232D3047"/><path d="M30 65 Q50 80 70 65" stroke="%232D3047" stroke-width="2" fill="none"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            position: relative;
+            z-index: 5;
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.5));
+            transition: var(--transition);
+            transform-origin: center bottom;
+        }
+
+        .pet-effects {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 6;
+            pointer-events: none;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .speech-bubble {
+            position: absolute;
+            top: 15%;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 18px;
+            font-size: 14px;
+            color: var(--dark);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 10;
+            box-shadow: var(--shadow-sm);
+            max-width: 70%;
+            text-align: center;
+            transform: translateY(10px);
+        }
+
+        .speech-bubble:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 10px 10px 0;
+            border-style: solid;
+            border-color: white transparent;
+        }
+
+        .stats-container {
+            width: 90%;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 15px;
+            backdrop-filter: blur(5px);
+            margin-top: 20px;
+        }
+
+        .stat-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .stat-bar:last-child {
+            margin-bottom: 0;
+        }
+
+        .stat-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .hunger-icon {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FF6B35"><path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.557 1.522 4.82 3.889 6.115l-.89 3.634C5.083 20.92 6.748 22 8.694 22h6.612c1.946 0 3.611-1.08 4.695-3.136l-.89-3.634C19.478 14.935 21 12.672 21 10.115 21 6.185 16.97 3 12 3zm0 2c3.87 0 7 2.355 7 5.115 0 1.564-.866 3.012-2.279 4.03l-.72.47.342.814.758 3.096c.52 1.123.9 1.471.9 1.471H8c0-.004.38-.348.9-1.471l.758-3.096.342-.814-.72-.47C5.866 13.127 5 11.68 5 10.115 5 7.355 8.13 5 12 5zm-4.5 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm9 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3z"/></svg>');
+        }
+
+        .happiness-icon {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2300A6FB"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 2a8 8 0 110 16 8 8 0 010-16zm-5 7a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm10 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-6.5 3c-1.203 0-2.53.462-3.389 1.336-.86.874-1.111 1.87-1.111 2.664h10c0-.794-.25-1.79-1.111-2.664C13.03 14.462 11.703 14 10.5 14z"/></svg>');
+        }
+
+        .energy-icon {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%239B5DE5"><path d="M12 20a8 8 0 01-8-8 8 8 0 018-8 8 8 0 018 8 8 8 0 01-8 8zm0-18a10 10 0 00-10 10 10 10 0 0010 10 10 10 0 0010-10A10 10 0 0012 2zm0 15l-5-5h3V7h4v5h3l-5 5z"/></svg>');
+        }
+
+        .stat-progress {
+            flex: 1;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .stat-fill {
+            height: 100%;
+            width: 100%;
+            transition: var(--transition);
+        }
+
+        #hunger-bar {
+            background: linear-gradient(90deg, #FF6B35, #FF9F1C);
+        }
+
+        #happiness-bar {
+            background: linear-gradient(90deg, #00A6FB, #00C2FF);
+        }
+
+        #energy-bar {
+            background: linear-gradient(90deg, #9B5DE5, #C77DFF);
+        }
+
+        .action-panel {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+            padding: 0 15px;
+            z-index: 10;
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            border: none;
+            border-radius: 15px;
+            padding: 12px 8px;
+            width: 70px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-md);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .action-btn.premium {
+            background: linear-gradient(45deg, var(--premium), #C77DFF);
+            color: white;
+        }
+
+        .action-btn img {
+            width: 28px;
+            height: 28px;
+            margin-bottom: 5px;
+            transition: var(--transition);
+        }
+
+        .action-btn span {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .action-btn.premium span {
+            color: white;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-container {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            animation: modalOpen 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes modalOpen {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            padding: 15px 20px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-btn:hover {
+            transform: rotate(90deg);
+        }
+
+        .shop-tabs {
+            display: flex;
+            background: #f5f5f5;
+            padding: 5px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: bold;
+            color: var(--dark);
+            transition: var(--transition);
+            font-size: 12px;
+        }
+
+        .tab-btn.active {
+            background: white;
+            border-radius: 10px;
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tab-btn.premium.active {
+            color: var(--premium);
+        }
+
+        .shop-items-container {
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+
+        .shop-items {
+            padding: 15px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .shop-item {
+            background: #f9f9f9;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .shop-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .shop-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            transition: var(--transition);
+        }
+
+        .shop-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .shop-item h3 {
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+
+        .shop-item p {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .price {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .price img {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+        }
+
+        .buy-btn {
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 15px;
+            width: 100%;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            font-size: 12px;
+            box-shadow: 0 2px 5px rgba(255, 107, 53, 0.3);
+        }
+
+        .buy-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 10px rgba(255, 107, 53, 0.4);
+        }
+
+        .daily-bonus-container {
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .daily-bonus-container h3 {
+            font-size: 14px;
+            color: var(--dark);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .bonus-btn {
+            background: linear-gradient(45deg, var(--secondary), #00C2FF));
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 12px;
+            width: 100%;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            box-shadow: 0 2px 5px rgba(0, 166, 251, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .bonus-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 166, 251, 0.4);
+        }
+
+        .bonus-btn span {
+            font-size: 12px;
+        }
+
+        .timer {
+            font-size: 10px;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+
+        #effects-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .coin-effect {
+            position: absolute;
+            font-size: 24px;
+            font-weight: bold;
+            color: #FFD166;
+            animation: coin-float 1.5s ease-out forwards;
+            z-index: 10;
+        }
+
+        .heart-effect {
+            position: absolute;
+            font-size: 24px;
+            color: #FF6B35;
+            animation: float 2s ease-out forwards;
+            z-index: 10;
+        }
+
+        .sparkle-effect {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FFD166"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/></svg>');
+            background-size: contain;
+            animation: sparkle 1.5s ease-out forwards;
+            z-index: 10;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        @keyframes coin-float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-80px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes sparkle {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 1000;
+            font-weight: bold;
+            text-align: center;
+            max-width: 80%;
+        }
+
+        .achievement-popup {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .achievement-badge {
+            font-size: 30px;
+            flex-shrink: 0;
+        }
+
+        .achievement-content h3 {
+            color: var(--primary);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .achievement-content p {
+            color: var(--dark);
+            font-size: 12px;
+        }
+
+        /* Анимации питомца */
+        @keyframes pet-idle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pet-happy {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes pet-excited {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-10px) rotate(5deg); }
+            50% { transform: translateY(0) rotate(0deg); }
+            75% { transform: translateY(-10px) rotate(-5deg); }
+        }
+
+        /* Адаптивность */
+        @media (max-width: 400px) {
+            .pet {
+                width: 180px;
+                height: 180px;
+            }
+            
+            .action-btn {
+                width: 60px;
+                padding: 10px;
+            }
+            
+            .shop-items {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-icon {
+                width: 20px;
+                height: 20px;
+                margin-right: 8px;
+            }
+            
+            .stat-progress {
+                height: 8px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="game-container">
@@ -26,11 +748,11 @@
             
             <div class="currency-container">
                 <div class="coins-box">
-                    <img src="images/ui/coin.png" alt="Монеты">
+                    <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232D3047'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z'/></svg>" alt="Монеты">
                     <span id="coins">5000</span>
                 </div>
                 <div class="gems-box">
-                    <img src="images/ui/gem.png" alt="Кристаллы">
+                    <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FFFFFF'><path d='M16 2l5 5v14.008c0 .548-.445.992-.993.992H3.993A.994.994 0 0 1 3 21.008V2.992C3 2.444 3.445 2 3.993 2H16zm-2.471 12.446l-2.21-4.43-2.21 4.43h4.42zm.473-.5l1.04 2.08h-5.08l1.04-2.08h3zm-2.05-4.086l-1.037-2.076h3.168l-1.037 2.076h-1.094zm-1.128-1.36l-1.04-2.08h5.08l-1.04 2.08h-3zm-1.128-1.36l-1.037-2.076h3.168l-1.037 2.076h-1.094z'/></svg>" alt="Кристаллы">
                     <span id="gems">25</span>
                 </div>
             </div>
@@ -69,19 +791,19 @@
         <!-- Панель действий -->
         <div class="action-panel">
             <button id="feed-btn" class="action-btn pulse">
-                <img src="images/ui/food-icon.png" alt="Кормить">
+                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232D3047'><path d='M12 3c-4.97 0-9 3.185-9 7.115 0 2.557 1.522 4.82 3.889 6.115l-.89 3.634C5.083 20.92 6.748 22 8.694 22h6.612c1.946 0 3.611-1.08 4.695-3.136l-.89-3.634C19.478 14.935 21 12.672 21 10.115 21 6.185 16.97 3 12 3zm0 2c3.87 0 7 2.355 7 5.115 0 1.564-.866 3.012-2.279 4.03l-.72.47.342.814.758 3.096c.52 1.123.9 1.471.9 1.471H8c0-.004.38-.348.9-1.471l.758-3.096.342-.814-.72-.47C5.866 13.127 5 11.68 5 10.115 5 7.355 8.13 5 12 5zm-4.5 6a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm9 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3z'/></svg>" alt="Кормить">
                 <span>Кормить</span>
             </button>
             <button id="play-btn" class="action-btn pulse">
-                <img src="images/ui/game-icon.png" alt="Играть">
+                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232D3047'><path d='M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 2a8 8 0 110 16 8 8 0 010-16zm-5 7a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm10 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-6.5 3c-1.203 0-2.53.462-3.389 1.336-.86.874-1.111 1.87-1.111 2.664h10c0-.794-.25-1.79-1.111-2.664C13.03 14.462 11.703 14 10.5 14z'/></svg>" alt="Играть">
                 <span>Играть</span>
             </button>
             <button id="care-btn" class="action-btn pulse">
-                <img src="images/ui/care-icon.png" alt="Уход">
+                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232D3047'><path d='M12 20a8 8 0 01-8-8 8 8 0 018-8 8 8 0 018 8 8 8 0 01-8 8zm0-18a10 10 0 00-10 10 10 10 0 0010 10 10 10 0 0010-10A10 10 0 0012 2zm0 15l-5-5h3V7h4v5h3l-5 5z'/></svg>" alt="Уход">
                 <span>Уход</span>
             </button>
             <button id="shop-btn" class="action-btn premium pulse">
-                <img src="images/ui/shop-icon.png" alt="Магазин">
+                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FFFFFF'><path d='M16 2l5 5v14.008c0 .548-.445.992-.993.992H3.993A.994.994 0 0 1 3 21.008V2.992C3 2.444 3.445 2 3.993 2H16zm-2.471 12.446l-2.21-4.43-2.21 4.43h4.42zm.473-.5l1.04 2.08h-5.08l1.04-2.08h3zm-2.05-4.086l-1.037-2.076h3.168l-1.037 2.076h-1.094zm-1.128-1.36l-1.04-2.08h5.08l-1.04 2.08h-3zm-1.128-1.36l-1.037-2.076h3.168l-1.037 2.076h-1.094z'/></svg>" alt="Магазин">
                 <span>Магазин</span>
             </button>
         </div>
@@ -132,6 +854,869 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // Конфигурация игры
+        const CONFIG = {
+            // Настройки параметров
+            STATS: {
+                MAX: 100,
+                HUNGER_DECREASE: 0.5,
+                HAPPINESS_DECREASE: 0.4,
+                ENERGY_DECREASE: 0.3,
+                
+                FEED_AMOUNT: 30,
+                PLAY_AMOUNT: 35,
+                CARE_AMOUNT: 50,
+                PET_AMOUNT: 10
+            },
+            
+            // Магазин
+            SHOP_ITEMS: {
+                food: [
+                    {
+                        id: 'food1',
+                        name: 'Рыбка',
+                        price: 25,
+                        priceType: 'coins',
+                        image: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FF6B35"><path d="M20.395 10.803c-.002-.004-.004-.007-.006-.011l-1.42-2.772c-.012-.024-.028-.045-.043-.066-.005-.008-.01-.016-.015-.024-.01-.014-.02-.028-.031-.041-.01-.012-.022-.023-.034-.034-.012-.01-.025-.02-.038-.029-.014-.01-.028-.018-.043-.026-.014-.008-.03-.014-.045-.02-.015-.006-.03-.01-.046-.015-.016-.004-.032-.007-.048-.01-.018-.003-.036-.004-.054-.006-.02-.002-.04-.002-.06-.002-.01 0-.02.002-.03.003-.034.003-.067.01-.1.017-.01.003-.02.006-.03.01-.026.008-.05.018-.075.03-.008.004-.016.008-.024.012-.023.012-.045.025-.066.04-.006.004-.012.008-.018.013l-2.773 1.42c-.004.002-.007.004-.01.006-1.5.77-3.4 1.74-5.73 1.74-2.33 0-4.23-.97-5.73-1.74-.004-.002-.007-.004-.011-.006l-2.772-1.42c-.024-.012-.045-.028-.066-.043-.008-.005-.016-.01-.024-.015-.014-.01-.028-.02-.041-.031-.012-.01-.023-.022-.034-.034-.01-.012-.02-.025-.029-.038-.01-.014-.018-.028-.026-.043-.008-.014-.014-.03-.02-.045-.006-.015-.01-.03-.015-.046-.004-.016-.007-.032-.01-.048-.003-.018-.004-.036-.006-.054-.002-.02-.002-.04-.002-.06 0-.01.002-.02.003-.03.003-.034.01-.067.017-.1.003-.01.006-.02.01-.03.008-.026.018-.05.03-.075.004-.008.008-.016.012-.024.012-.023.025-.045.04-.066.004-.006.008-.012.013-.018l1.42-2.773c.002-.004.004-.007.006-.01C4.97 4.23 5.94 2.33 5.94 0h12.12c0 2.33.97 4.23 1.74 5.73.002.004.004.007.006.01l1.42 2.773c.012.024.028.045.043.066.005.008.01.016.015.024.01.014.02.028.031.041.01.012.022.023.034.034.012.01.025.02.038.029.014.01.028.018.043.026.014.008.03.014.045.02.015.006.03.01.046.015.016.004.032.007.048.01.018.003.036.004.054.006.02.002.04.002.06.002.01 0 .02-.002.03-.003.034-.003.067-.01.1-.017.01-.003.02-.006.03-.01.026-.008.05-.018.075-.03.008-.004.016-.008.024-.012.023-.012.045-.025.066-.04.006-.004.012-.008.018-.013l2.773-1.42c.004-.002.007-.004.01-.006.77-1.5 1.74-3.4 1.74-5.73h-12.12c0 2.33-.97 4.23-1.74 5.73zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/></svg>',
+                        effect: { hunger: 30 },
+                        description: 'Восстанавливает сытость'
+                    },
+                    {
+                        id: 'food2',
+                        name: 'Премиум корм',
+                        price: 5,
+                        priceType: 'gems',
+                        image: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%239B5DE5"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></svg>',
+                        effect: { hunger: 50, happiness: 15 },
+                        description: 'Полное восстановление'
+                    }
+                ],
+                toys: [
+                    {
+                        id: 'toy1',
+                        name: 'Мячик',
+                        price: 40,
+                        priceType: 'coins',
+                        image: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2300A6FB"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/><path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"/></svg>',
+                        effect: { happiness: 30 },
+                        description: '+30 к счастью'
+                    },
+                    {
+                        id: 'toy2',
+                        name: 'Игрушка',
+                        price: 8,
+                        priceType: 'gems',
+                        image: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%239B5DE5"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zm0-2a8 8 0 100-16 8 8 0 000 16zm-3.5-6a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm7 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>',
+                        effect: { happiness: 50, energy: 10 },
+                        description: 'Супер-развлечение'
+                    }
+                ],
+                premium: [
+                    {
+                        id: 'gem-pack',
+                        name: 'Набор кристаллов',
+                        price: 1.99,
+                        priceType: 'real',
+                        image: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%239B5DE5"><path d="M16 2l5 5v14.008c0 .548-.445.992-.993.992H3.993A.994.994 0 0 1 3 21.008V2.992C3 2.444 3.445 2 3.993 2H16zm-2.471 12.446l-2.21-4.43-2.21 4.43h4.42zm.473-.5l1.04 2.08h-5.08l1.04-2.08h3zm-2.05-4.086l-1.037-2.076h3.168l-1.037 2.076h-1.094zm-1.128-1.36l-1.04-2.08h5.08l-1.04 2.08h-3zm-1.128-1.36l-1.037-2.076h3.168l-1.037 2.076h-1.094z"/></svg>',
+                        effect: { gems: 15 },
+                        description: '15 премиум кристаллов'
+                    },
+                    {
+                        id: 'mega-pack',
+                        name: 'Мега набор',
+                        price: 4.99,
+                        priceType: 'real',
+                        image: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FFD166"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></svg>',
+                        effect: { gems: 50, coins: 2000 },
+                        description: 'Максимальный набор'
+                    }
+                ]
+            },
+            
+            // Опыт и уровни
+            XP: {
+                PER_ACTION: 20,
+                BASE_LEVEL_UP: 100,
+                MULTIPLIER: 1.25
+            },
+            
+            // Награды
+            REWARDS: {
+                LEVEL_UP_COINS: 150,
+                LEVEL_UP_GEMS: 2,
+                DAILY_BONUS: 100,
+                ACHIEVEMENT_REWARD: 50
+            },
+            
+            // Сообщения
+            MESSAGES: {
+                HAPPY: [
+                    "Я тебя люблю!",
+                    "Поиграем еще?",
+                    "Ты лучший хозяин!",
+                    "Мурррр!",
+                    "Гав-гав!"
+                ],
+                HUNGRY: [
+                    "Я голодный!",
+                    "Покорми меня!",
+                    "Хочу вкусняшку!",
+                    "Где моя еда?",
+                    "Ням-ням!"
+                ],
+                TIRED: [
+                    "Я устал...",
+                    "Хочу спать",
+                    "Отдохну немного",
+                    "Закрою глазки"
+                ],
+                SAD: [
+                    "Мне грустно...",
+                    "Поиграй со мной",
+                    "Погладь меня",
+                    "Я одинокий"
+                ]
+            },
+            
+            // Достижения
+            ACHIEVEMENTS: [
+                {
+                    id: 'first_feed',
+                    name: 'Первый обед',
+                    description: 'Покормите питомца впервые',
+                    condition: stats => stats.feeds >= 1,
+                    reward: 50
+                },
+                {
+                    id: 'pet_lover',
+                    name: 'Любитель животных',
+                    description: 'Погладьте питомца 50 раз',
+                    condition: stats => stats.pets >= 50,
+                    reward: 100
+                },
+                {
+                    id: 'play_master',
+                    name: 'Мастер игр',
+                    description: 'Поиграйте 30 раз',
+                    condition: stats => stats.plays >= 30,
+                    reward: 150
+                },
+                {
+                    id: 'rich_owner',
+                    name: 'Богатый хозяин',
+                    description: 'Заработайте 5000 монет',
+                    condition: stats => stats.totalCoins >= 5000,
+                    reward: 200
+                }
+            ]
+        };
+
+        // Состояние игры
+        const gameState = {
+            stats: {
+                hunger: 80,
+                happiness: 90,
+                energy: 100
+            },
+            level: 1,
+            xp: 0,
+            coins: 5000,
+            gems: 25,
+            inventory: {
+                food: 5,
+                toys: 2
+            },
+            lastAction: Date.now(),
+            lastPlay: 0,
+            lastFeed: 0,
+            lastDailyBonus: 0,
+            achievements: {
+                unlocked: [],
+                stats: {
+                    feeds: 0,
+                    plays: 0,
+                    pets: 0,
+                    totalCoins: 5000
+                }
+            },
+            settings: {
+                sound: true,
+                notifications: true
+            }
+        };
+
+        // DOM элементы
+        const elements = {
+            // Основные элементы
+            pet: document.getElementById('pet'),
+            petEffects: document.getElementById('pet-effects'),
+            level: document.getElementById('level'),
+            coins: document.getElementById('coins'),
+            gems: document.getElementById('gems'),
+            xpProgress: document.getElementById('xp-progress'),
+            hungerBar: document.getElementById('hunger-bar'),
+            happinessBar: document.getElementById('happiness-bar'),
+            energyBar: document.getElementById('energy-bar'),
+            speechBubble: document.getElementById('speech-bubble'),
+            notification: document.getElementById('notification'),
+            effectsLayer: document.getElementById('effects-layer'),
+            
+            // Кнопки
+            feedBtn: document.getElementById('feed-btn'),
+            playBtn: document.getElementById('play-btn'),
+            careBtn: document.getElementById('care-btn'),
+            shopBtn: document.getElementById('shop-btn'),
+            dailyBonusBtn: document.getElementById('daily-bonus-btn'),
+            dailyTimer: document.getElementById('daily-timer'),
+            
+            // Модальные окна
+            shopModal: document.getElementById('shop-modal'),
+            closeBtn: document.querySelector('.close-btn'),
+            tabBtns: document.querySelectorAll('.tab-btn'),
+            shopItems: {
+                food: document.getElementById('food-items'),
+                toys: document.getElementById('toys-items'),
+                premium: document.getElementById('premium-items')
+            },
+            
+            // Достижения
+            achievementPopup: document.getElementById('achievement-popup'),
+            achievementText: document.getElementById('achievement-text')
+        };
+
+        // Инициализация игры
+        function initGame() {
+            loadGame();
+            setupEventListeners();
+            loadShopItems();
+            startGameLoop();
+            updatePetState();
+            updateDailyBonusTimer();
+            
+            // Приветственное сообщение
+            setTimeout(() => {
+                showSpeech("Привет! Я твой новый питомец!");
+            }, 1000);
+        }
+
+        // Настройка обработчиков событий
+        function setupEventListeners() {
+            // Основные действия
+            elements.feedBtn.addEventListener('click', feed);
+            elements.playBtn.addEventListener('click', play);
+            elements.careBtn.addEventListener('click', care);
+            elements.shopBtn.addEventListener('click', openShop);
+            
+            // Клик по питомцу
+            elements.pet.addEventListener('click', pet);
+            
+            // Магазин
+            elements.closeBtn.addEventListener('click', closeShop);
+            elements.tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => switchShopTab(btn.dataset.tab));
+            });
+            
+            // Ежедневный бонус
+            elements.dailyBonusBtn.addEventListener('click', claimDailyBonus);
+        }
+
+        // Загрузка сохранений
+        function loadGame() {
+            const savedGame = localStorage.getItem('superPetGame');
+            if (savedGame) {
+                const parsedData = JSON.parse(savedGame);
+                
+                // Сохраняем настройки даже если они не были в сохранении
+                const settings = parsedData.settings || gameState.settings;
+                
+                Object.assign(gameState, parsedData);
+                gameState.settings = settings;
+                
+                updateUI();
+            }
+        }
+
+        // Сохранение игры
+        function saveGame() {
+            localStorage.setItem('superPetGame', JSON.stringify(gameState));
+        }
+
+        // Обновление интерфейса
+        function updateUI() {
+            // Статистика
+            elements.level.textContent = gameState.level;
+            elements.coins.textContent = gameState.coins;
+            elements.gems.textContent = gameState.gems;
+            
+            // Прогресс
+            const xpPercentage = (gameState.xp / getXpToLevel()) * 100;
+            elements.xpProgress.style.width = `${xpPercentage}%`;
+            
+            // Статус бары
+            elements.hungerBar.style.width = `${gameState.stats.hunger}%`;
+            elements.happinessBar.style.width = `${gameState.stats.happiness}%`;
+            elements.energyBar.style.width = `${gameState.stats.energy}%`;
+            
+            saveGame();
+        }
+
+        // Получение XP для следующего уровня
+        function getXpToLevel() {
+            return CONFIG.XP.BASE_LEVEL_UP * Math.pow(CONFIG.XP.MULTIPLIER, gameState.level - 1);
+        }
+
+        // Обновление состояния питомца
+        function updatePetState() {
+            // Удаляем все предыдущие классы анимации
+            elements.pet.className = 'pet';
+            elements.petEffects.style.backgroundImage = '';
+            
+            if (gameState.stats.hunger < 30 || gameState.stats.happiness < 30) {
+                // Грустный
+                elements.pet.style.backgroundImage = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"50\" r=\"45\" fill=\"%23FFD166\"/><circle cx=\"35\" cy=\"40\" r=\"5\" fill=\"%232D3047\"/><circle cx=\"65\" cy=\"40\" r=\"5\" fill=\"%232D3047\"/><path d=\"M30 65 Q50 55 70 65\" stroke=\"%232D3047\" stroke-width=\"2\" fill=\"none\"/></svg>')";
+            } else if (gameState.stats.energy < 30) {
+                // Уставший
+                elements.pet.style.backgroundImage = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"50\" r=\"45\" fill=\"%23FFD166\"/><circle cx=\"35\" cy=\"40\" r=\"5\" fill=\"%232D3047\"/><circle cx=\"65\" cy=\"40\" r=\"5\" fill=\"%232D3047\"/><path d=\"M30 65 Q50 80 70 65\" stroke=\"%232D3047\" stroke-width=\"2\" fill=\"none\"/><path d=\"M25 50 Q35 55 45 50\" stroke=\"%232D3047\" stroke-width=\"2\" fill=\"none\"/><path d=\"M55 50 Q65 55 75 50\" stroke=\"%232D3047\" stroke-width=\"2\" fill=\"none\"/></svg>')";
+            } else if (gameState.stats.happiness > 70) {
+                // Счастливый
+                elements.pet.style.backgroundImage = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"50\" r=\"45\" fill=\"%23FFD166\"/><circle cx=\"35\" cy=\"40\" r=\"5\" fill=\"%232D3047\"/><circle cx=\"65\" cy=\"40\" r=\"5\" fill=\"%232D3047\"/><path d=\"M30 65 Q50 80 70 65\" stroke=\"%232D3047\" stroke-width=\"2\" fill=\"none\"/></svg>')";
+                elements.pet.classList.add('pet-happy');
+                elements.petEffects.style.backgroundImage = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"50\" r=\"45\" fill=\"%23FFD166\" opacity=\"0.2\"/></svg>')";
+            } else {
+                // Обычный
+                elements.pet.style.backgroundImage = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"50\" r=\"45\" fill=\"%23FFD166\"/><circle cx=\"35\" cy=\"40\" r=\"5\" fill=\"%232D3047\"/><circle cx=\"65\" cy=\"40\" r=\"5\" fill=\"%232D3047\"/><path d=\"M30 65 Q50 80 70 65\" stroke=\"%232D3047\" stroke-width=\"2\" fill=\"none\"/></svg>')";
+                elements.pet.classList.add('pet-idle');
+            }
+        }
+
+        // Игровой цикл
+        function startGameLoop() {
+            setInterval(() => {
+                const now = Date.now();
+                const minutesPassed = (now - gameState.lastAction) / (1000 * 60);
+                
+                // Уменьшение параметров
+                gameState.stats.hunger = Math.max(
+                    0, 
+                    gameState.stats.hunger - (CONFIG.STATS.HUNGER_DECREASE * minutesPassed)
+                );
+                
+                gameState.stats.happiness = Math.max(
+                    0, 
+                    gameState.stats.happiness - (CONFIG.STATS.HAPPINESS_DECREASE * minutesPassed)
+                );
+                
+                gameState.stats.energy = Math.max(
+                    0, 
+                    gameState.stats.energy - (CONFIG.STATS.ENERGY_DECREASE * minutesPassed)
+                );
+                
+                gameState.lastAction = now;
+                updateUI();
+                updatePetState();
+                
+                // Случайные сообщения
+                if (Math.random() > 0.95) {
+                    showRandomMessage();
+                }
+                
+                // Обновление таймера ежедневного бонуса
+                updateDailyBonusTimer();
+            }, 60000); // Каждую минуту
+        }
+
+        // Основные действия
+        function feed() {
+            if (gameState.inventory.food <= 0) {
+                showNotification("Нет еды! Купите в магазине");
+                playSound('notification.mp3');
+                return;
+            }
+            
+            // Проверка на спам
+            const now = Date.now();
+            if (now - gameState.lastFeed < 3000) return;
+            gameState.lastFeed = now;
+            
+            gameState.inventory.food--;
+            gameState.stats.hunger = Math.min(
+                CONFIG.STATS.MAX, 
+                gameState.stats.hunger + CONFIG.STATS.FEED_AMOUNT
+            );
+            gameState.stats.happiness = Math.min(
+                CONFIG.STATS.MAX, 
+                gameState.stats.happiness + 5
+            );
+            gameState.lastAction = now;
+            gameState.achievements.stats.feeds++;
+            
+            // Анимация
+            animatePet('eating');
+            createHeartsEffect(3);
+            createSparkleEffect();
+            
+            addXP(CONFIG.XP.PER_ACTION);
+            showSpeech("Вкусно! Спасибо!");
+            updateUI();
+            updatePetState();
+            checkAchievements();
+            playSound('eat.mp3');
+        }
+
+        function play() {
+            if (gameState.stats.energy < 20) {
+                showSpeech("Я устал...");
+                playSound('notification.mp3');
+                return;
+            }
+            
+            // Проверка на спам
+            const now = Date.now();
+            if (now - gameState.lastPlay < 5000) return;
+            gameState.lastPlay = now;
+            
+            gameState.stats.happiness = Math.min(
+                CONFIG.STATS.MAX, 
+                gameState.stats.happiness + CONFIG.STATS.PLAY_AMOUNT
+            );
+            gameState.stats.energy = Math.max(
+                0, 
+                gameState.stats.energy - 15
+            );
+            gameState.stats.hunger = Math.max(
+                0, 
+                gameState.stats.hunger - 10
+            );
+            gameState.lastAction = now;
+            gameState.achievements.stats.plays++;
+            
+            // Анимация
+            animatePet('playing');
+            createHeartsEffect(8);
+            createSparkleEffect(5);
+            
+            addXP(CONFIG.XP.PER_ACTION);
+            showSpeech("Это было весело!");
+            updateUI();
+            updatePetState();
+            checkAchievements();
+            playSound('play.mp3');
+        }
+
+        function care() {
+            gameState.stats.energy = Math.min(
+                CONFIG.STATS.MAX, 
+                gameState.stats.energy + CONFIG.STATS.CARE_AMOUNT
+            );
+            gameState.stats.happiness = Math.min(
+                CONFIG.STATS.MAX, 
+                gameState.stats.happiness + 10
+            );
+            gameState.lastAction = Date.now();
+            
+            // Анимация
+            animatePet('sleeping');
+            createSparkleEffect(3);
+            
+            setTimeout(() => {
+                showSpeech("Я отдохнул!");
+                updatePetState();
+            }, 2000);
+            
+            addXP(CONFIG.XP.PER_ACTION);
+            updateUI();
+            checkAchievements();
+            playSound('sleep.mp3');
+        }
+
+        function pet() {
+            gameState.stats.happiness = Math.min(
+                CONFIG.STATS.MAX, 
+                gameState.stats.happiness + CONFIG.STATS.PET_AMOUNT
+            );
+            gameState.achievements.stats.pets++;
+            gameState.lastAction = Date.now();
+            
+            // Анимация
+            elements.pet.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                elements.pet.style.transform = '';
+            }, 300);
+            
+            createHeartsEffect(2);
+            showRandomMessage();
+            updateUI();
+            updatePetState();
+            checkAchievements();
+            playSound('click.mp3');
+        }
+
+        // Анимации питомца
+        function animatePet(action) {
+            switch(action) {
+                case 'eating':
+                    elements.pet.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        elements.pet.style.transform = '';
+                    }, 300);
+                    break;
+                    
+                case 'playing':
+                    elements.pet.classList.add('pet-excited');
+                    setTimeout(() => {
+                        elements.pet.classList.remove('pet-excited');
+                    }, 1000);
+                    break;
+                    
+                case 'sleeping':
+                    const originalBg = elements.pet.style.backgroundImage;
+                    elements.pet.style.backgroundImage = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"50\" r=\"45\" fill=\"%23FFD166\"/><circle cx=\"35\" cy=\"40\" r=\"5\" fill=\"%232D3047\"/><circle cx=\"65\" cy=\"40\" r=\"5\" fill=\"%232D3047\"/><path d=\"M30 65 Q50 80 70 65\" stroke=\"%232D3047\" stroke-width=\"2\" fill=\"none\"/><path d=\"M25 50 Q35 55 45 50\" stroke=\"%232D3047\" stroke-width=\"2\" fill=\"none\"/><path d=\"M55 50 Q65 55 75 50\" stroke=\"%232D3047\" stroke-width=\"2\" fill=\"none\"/></svg>')";
+                    setTimeout(() => {
+                        elements.pet.style.backgroundImage = originalBg;
+                    }, 2000);
+                    break;
+            }
+        }
+
+        // Магазин
+        function loadShopItems() {
+            for (const category in CONFIG.SHOP_ITEMS) {
+                elements.shopItems[category].innerHTML = '';
+                
+                CONFIG.SHOP_ITEMS[category].forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'shop-item';
+                    
+                    const priceDisplay = item.priceType === 'real' 
+                        ? `$${item.price}` 
+                        : `<img src="images/ui/${item.priceType}.png"><span>${item.price}</span>`;
+                    
+                    itemElement.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}">
+                        <h3>${item.name}</h3>
+                        <p>${item.description}</p>
+                        <div class="price">${priceDisplay}</div>
+                        <button class="buy-btn" data-id="${item.id}">Купить</button>
+                    `;
+                    
+                    itemElement.querySelector('.buy-btn').addEventListener('click', () => buyItem(item));
+                    elements.shopItems[category].appendChild(itemElement);
+                });
+            }
+        }
+
+        function openShop() {
+            elements.shopModal.style.display = 'flex';
+            playSound('click.mp3');
+        }
+
+        function closeShop() {
+            elements.shopModal.style.display = 'none';
+            playSound('click.mp3');
+        }
+
+        function switchShopTab(tabName) {
+            elements.tabBtns.forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.tab-btn[data-tab="${tabName}"]`).classList.add('active');
+            
+            for (const category in elements.shopItems) {
+                elements.shopItems[category].classList.add('hidden');
+            }
+            
+            elements.shopItems[tabName].classList.remove('hidden');
+            playSound('click.mp3');
+        }
+
+        function buyItem(item) {
+            if (item.priceType === 'real') {
+                // Имитация реальной покупки
+                showNotification(`Покупка успешна! Получено: ${item.effect.gems ? item.effect.gems + ' кристаллов' : ''} ${item.effect.coins ? item.effect.coins + ' монет' : ''}`);
+                
+                if (item.effect.gems) {
+                    gameState.gems += item.effect.gems;
+                    createCoinsEffect(0, item.effect.gems);
+                }
+                if (item.effect.coins) {
+                    gameState.coins += item.effect.coins;
+                    gameState.achievements.stats.totalCoins += item.effect.coins;
+                    createCoinsEffect(item.effect.coins, 0);
+                }
+            } else {
+                // Проверка баланса
+                if (gameState[item.priceType] < item.price) {
+                    showNotification(`Недостаточно ${item.priceType === 'coins' ? 'монет' : 'кристаллов'}!`);
+                    playSound('notification.mp3');
+                    return;
+                }
+                
+                // Списание средств
+                gameState[item.priceType] -= item.price;
+                
+                // Добавление в инвентарь
+                if (item.id.includes('food')) {
+                    gameState.inventory.food++;
+                } else if (item.id.includes('toy')) {
+                    gameState.inventory.toys++;
+                }
+                
+                // Эффекты
+                createCoinsEffect(
+                    item.priceType === 'coins' ? -item.price : 0,
+                    item.priceType === 'gems' ? -item.price : 0
+                );
+                
+                showNotification(`Куплено! Осталось: ${gameState[item.priceType]} ${item.priceType === 'coins' ? 'монет' : 'кристаллов'}`);
+            }
+            
+            updateUI();
+            checkAchievements();
+            playSound('win.mp3');
+        }
+
+        // Ежедневный бонус
+        function updateDailyBonusTimer() {
+            const now = new Date();
+            const nextDay = new Date();
+            nextDay.setDate(nextDay.getDate() + 1);
+            nextDay.setHours(0, 0, 0, 0);
+            
+            const diff = nextDay - now;
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            elements.dailyTimer.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Проверка доступности бонуса
+            const lastBonusDate = new Date(gameState.lastDailyBonus);
+            const today = new Date();
+            
+            if (lastBonusDate.getDate() !== today.getDate() || 
+                lastBonusDate.getMonth() !== today.getMonth() || 
+                lastBonusDate.getFullYear() !== today.getFullYear()) {
+                elements.dailyBonusBtn.disabled = false;
+                elements.dailyBonusBtn.style.opacity = '1';
+            } else {
+                elements.dailyBonusBtn.disabled = true;
+                elements.dailyBonusBtn.style.opacity = '0.7';
+            }
+        }
+
+        function claimDailyBonus() {
+            const lastBonusDate = new Date(gameState.lastDailyBonus);
+            const today = new Date();
+            
+            if (lastBonusDate.getDate() === today.getDate() && 
+                lastBonusDate.getMonth() === today.getMonth() && 
+                lastBonusDate.getFullYear() === today.getFullYear()) {
+                showNotification("Вы уже получали бонус сегодня!");
+                playSound('notification.mp3');
+                return;
+            }
+            
+            gameState.coins += CONFIG.REWARDS.DAILY_BONUS;
+            gameState.achievements.stats.totalCoins += CONFIG.REWARDS.DAILY_BONUS;
+            gameState.lastDailyBonus = Date.now();
+            
+            showNotification(`Ежедневный бонус: +${CONFIG.REWARDS.DAILY_BONUS} монет!`);
+            createCoinsEffect(CONFIG.REWARDS.DAILY_BONUS, 0);
+            updateUI();
+            updateDailyBonusTimer();
+            checkAchievements();
+            playSound('win.mp3');
+        }
+
+        // Опыт и уровни
+        function addXP(amount) {
+            gameState.xp += amount;
+            const xpToLevel = getXpToLevel();
+            
+            if (gameState.xp >= xpToLevel) {
+                gameState.level++;
+                gameState.coins += CONFIG.REWARDS.LEVEL_UP_COINS;
+                gameState.gems += CONFIG.REWARDS.LEVEL_UP_GEMS;
+                gameState.achievements.stats.totalCoins += CONFIG.REWARDS.LEVEL_UP_COINS;
+                gameState.xp = gameState.xp - xpToLevel;
+                
+                showNotification(`🎉 Уровень ${gameState.level}! +${CONFIG.REWARDS.LEVEL_UP_COINS} монет и +${CONFIG.REWARDS.LEVEL_UP_GEMS} кристаллов`);
+                createCoinsEffect(CONFIG.REWARDS.LEVEL_UP_COINS, CONFIG.REWARDS.LEVEL_UP_GEMS);
+                checkAchievements();
+                playSound('win.mp3');
+            }
+            
+            updateUI();
+        }
+
+        // Достижения
+        function checkAchievements() {
+            CONFIG.ACHIEVEMENTS.forEach(achievement => {
+                if (!gameState.achievements.unlocked.includes(achievement.id) && 
+                    achievement.condition(gameState.achievements.stats)) {
+                    
+                    gameState.achievements.unlocked.push(achievement.id);
+                    gameState.coins += achievement.reward;
+                    gameState.achievements.stats.totalCoins += achievement.reward;
+                    
+                    showAchievement(achievement.name, achievement.description, achievement.reward);
+                }
+            });
+        }
+
+        function showAchievement(name, description, reward) {
+            elements.achievementText.textContent = `${name}: ${description} (+${reward} монет)`;
+            elements.achievementPopup.style.bottom = '20px';
+            
+            setTimeout(() => {
+                elements.achievementPopup.style.bottom = '-100px';
+            }, 3000);
+            
+            playSound('win.mp3');
+        }
+
+        // Эффекты
+        function createHeartsEffect(count = 3) {
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart-effect';
+                    heart.innerHTML = '❤️';
+                    heart.style.left = `${40 + Math.random() * 20}%`;
+                    heart.style.top = `${50 + Math.random() * 20}%`;
+                    elements.effectsLayer.appendChild(heart);
+                    
+                    setTimeout(() => heart.remove(), 2000);
+                }, i * 200);
+            }
+        }
+
+        function createSparkleEffect(count = 3) {
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    const sparkle = document.createElement('div');
+                    sparkle.className = 'sparkle-effect';
+                    sparkle.style.left = `${30 + Math.random() * 40}%`;
+                    sparkle.style.top = `${30 + Math.random() * 40}%`;
+                    elements.effectsLayer.appendChild(sparkle);
+                    
+                    setTimeout(() => sparkle.remove(), 1500);
+                }, i * 300);
+            }
+        }
+
+        function createCoinsEffect(coins = 0, gems = 0) {
+            if (coins > 0) {
+                const coin = document.createElement('div');
+                coin.className = 'coin-effect';
+                coin.textContent = `+${coins}💰`;
+                coin.style.left = '50%';
+                coin.style.top = '20%';
+                elements.effectsLayer.appendChild(coin);
+                
+                setTimeout(() => coin.remove(), 1500);
+            }
+            
+            if (gems > 0) {
+                const gem = document.createElement('div');
+                gem.className = 'coin-effect';
+                gem.textContent = `+${gems}💎`;
+                gem.style.left = '50%';
+                gem.style.top = '25%';
+                elements.effectsLayer.appendChild(gem);
+                
+                setTimeout(() => gem.remove(), 1500);
+            }
+        }
+
+        // Сообщения
+        function showSpeech(text) {
+            if (!gameState.settings.notifications) return;
+            
+            elements.speechBubble.textContent = text;
+            elements.speechBubble.style.opacity = '1';
+            elements.speechBubble.style.transform = 'translateY(0)';
+            
+            setTimeout(() => {
+                elements.speechBubble.style.opacity = '0';
+                elements.speechBubble.style.transform = 'translateY(10px)';
+            }, 2000);
+        }
+
+        function showRandomMessage() {
+            if (!gameState.settings.notifications) return;
+            
+            let messages;
+            
+            if (gameState.stats.hunger < 30) {
+                messages = CONFIG.MESSAGES.HUNGRY;
+            } else if (gameState.stats.energy < 30) {
+                messages = CONFIG.MESSAGES.TIRED;
+            } else if (gameState.stats.happiness < 30) {
+                messages = CONFIG.MESSAGES.SAD;
+            } else {
+                messages = CONFIG.MESSAGES.HAPPY;
+            }
+            
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            showSpeech(randomMessage);
+        }
+
+        function showNotification(text) {
+            if (!gameState.settings.notifications) return;
+            
+            elements.notification.textContent = text;
+            elements.notification.style.opacity = '1';
+            
+            setTimeout(() => {
+                elements.notification.style.opacity = '0';
+            }, 2000);
+        }
+
+        // Звуки
+        function playSound(soundFile) {
+            if (!gameState.settings.sound) return;
+            
+            // Используем базовые звуки браузера
+            const sounds = {
+                'click.mp3': () => {
+                    const audio = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...');
+                    audio.volume = 0.3;
+                    audio.play().catch(e => console.log("Автовоспроизведение заблокировано"));
+                },
+                'win.mp3': () => {
+                    const audio = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...');
+                    audio.volume = 0.3;
+                    audio.play().catch(e => console.log("Автовоспроизведение заблокировано"));
+                },
+                'eat.mp3': () => {
+                    const audio = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...');
+                    audio.volume = 0.3;
+                    audio.play().catch(e => console.log("Автовоспроизведение заблокировано"));
+                },
+                'play.mp3': () => {
+                    const audio = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...');
+                    audio.volume = 0.3;
+                    audio.play().catch(e => console.log("Автовоспроизведение заблокировано"));
+                },
+                'sleep.mp3': () => {
+                    const audio = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...');
+                    audio.volume = 0.3;
+                    audio.play().catch(e => console.log("Автовоспроизведение заблокировано"));
+                },
+                'notification.mp3': () => {
+                    const audio = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...');
+                    audio.volume = 0.3;
+                    audio.play().catch(e => console.log("Автовоспроизведение заблокировано"));
+                }
+            };
+            
+            if (sounds[soundFile]) {
+                sounds[soundFile]();
+            }
+        }
+
+        // Запуск игры
+        document.addEventListener('DOMContentLoaded', initGame);
+    </script>
 </body>
 </html>
