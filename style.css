@@ -5,8 +5,6 @@
     --dark: #2D3047;
     --light: #F7F7FF;
     --premium: #9B5DE5;
-    --danger: #EF476F;
-    --success: #06D6A0;
     
     --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.2);
@@ -19,17 +17,14 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Poppins', 'Montserrat', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     user-select: none;
-    -webkit-tap-highlight-color: transparent;
 }
 
 body {
     overflow: hidden;
     background: #1A1A2E;
     color: white;
-    touch-action: manipulation;
-    height: 100vh;
 }
 
 .game-container {
@@ -45,12 +40,11 @@ body {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-image: url('../assets/images/backgrounds/day.jpg');
+    background-image: url('images/background.jpg');
     background-size: cover;
     background-position: center;
     filter: brightness(0.9);
     z-index: 0;
-    transition: var(--transition);
 }
 
 .top-panel {
@@ -111,17 +105,6 @@ body {
     transition: var(--transition);
 }
 
-.pet-selector select {
-    background: rgba(0, 0, 0, 0.5);
-    border: none;
-    border-radius: 15px;
-    padding: 5px 10px;
-    color: white;
-    font-size: 12px;
-    backdrop-filter: blur(5px);
-    outline: none;
-}
-
 .currency-container {
     display: flex;
     gap: 10px;
@@ -172,7 +155,7 @@ body {
 .pet {
     width: 220px;
     height: 220px;
-    background-image: url('../assets/images/pets/cat/idle.png');
+    background-image: url('images/pet/idle.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -253,19 +236,15 @@ body {
 }
 
 .hunger-icon {
-    background-image: url('../assets/images/ui/food-icon.png');
+    background-image: url('images/ui/food-icon.png');
 }
 
 .happiness-icon {
-    background-image: url('../assets/images/ui/game-icon.png');
+    background-image: url('images/ui/game-icon.png');
 }
 
 .energy-icon {
-    background-image: url('../assets/images/ui/care-icon.png');
-}
-
-.hygiene-icon {
-    background-image: url('../assets/images/ui/care-icon.png');
+    background-image: url('images/ui/care-icon.png');
 }
 
 .stat-progress {
@@ -292,10 +271,6 @@ body {
 
 #energy-bar {
     background: linear-gradient(90deg, #9B5DE5, #C77DFF);
-}
-
-#hygiene-bar {
-    background: linear-gradient(90deg, #06D6A0, #00FFAB);
 }
 
 .action-panel {
@@ -571,80 +546,6 @@ body {
     opacity: 0.8;
 }
 
-.settings-btn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 20px;
-    cursor: pointer;
-    z-index: 20;
-    backdrop-filter: blur(5px);
-    transition: var(--transition);
-}
-
-.settings-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: rotate(30deg);
-}
-
-.settings-options {
-    padding: 20px;
-}
-
-.setting {
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-}
-
-.setting label {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    width: 100%;
-}
-
-.setting input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    accent-color: var(--primary);
-}
-
-.setting select {
-    width: 100%;
-    padding: 8px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    background: white;
-}
-
-.reset-btn {
-    background: var(--danger);
-    color: white;
-    border: none;
-    border-radius: 20px;
-    padding: 12px;
-    width: 100%;
-    cursor: pointer;
-    font-weight: bold;
-    transition: var(--transition);
-    margin-top: 20px;
-}
-
-.reset-btn:hover {
-    opacity: 0.9;
-    transform: translateY(-2px);
-}
-
 #effects-layer {
     position: absolute;
     top: 0;
@@ -676,41 +577,47 @@ body {
     position: absolute;
     width: 30px;
     height: 30px;
-    background-image: url('../assets/images/effects/sparkle.png');
+    background-image: url('images/effects/sparkle.png');
     background-size: contain;
     animation: sparkle 1.5s ease-out forwards;
     z-index: 10;
 }
 
-.confetti-effect {
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    background-image: url('../assets/images/effects/confetti.png');
-    background-size: contain;
-    animation: confetti 2s ease-out forwards;
-    z-index: 10;
-}
-
 @keyframes float {
-    0% { transform: translateY(0) scale(1); opacity: 1; }
-    100% { transform: translateY(-100px) scale(0.5); opacity: 0; }
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) scale(0.5);
+        opacity: 0;
+    }
 }
 
 @keyframes coin-float {
-    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(-80px) rotate(360deg); opacity: 0; }
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-80px) rotate(360deg);
+        opacity: 0;
+    }
 }
 
 @keyframes sparkle {
-    0% { transform: scale(0.5); opacity: 0; }
-    50% { transform: scale(1.2); opacity: 1; }
-    100% { transform: scale(0.8); opacity: 0; }
-}
-
-@keyframes confetti {
-    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(-150px) rotate(720deg); opacity: 0; }
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
 }
 
 .notification {
@@ -722,13 +629,13 @@ body {
     color: white;
     padding: 12px 24px;
     border-radius: 30px;
+    box-shadow: var(--shadow-lg);
     opacity: 0;
     transition: var(--transition);
     z-index: 1000;
     font-weight: bold;
     text-align: center;
     max-width: 80%;
-    box-shadow: var(--shadow-lg);
 }
 
 .achievement-popup {
@@ -761,15 +668,6 @@ body {
 .achievement-content p {
     color: var(--dark);
     font-size: 12px;
-}
-
-.achievement-reward {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-top: 5px;
-    font-size: 12px;
-    color: var(--success);
 }
 
 /* Анимации питомца */
@@ -815,27 +713,4 @@ body {
     .stat-progress {
         height: 8px;
     }
-}
-
-/* PWA стили */
-@media (display-mode: standalone) {
-    .top-panel {
-        padding-top: calc(15px + env(safe-area-inset-top));
-    }
-    
-    .action-panel {
-        padding-bottom: calc(20px + env(safe-area-inset-bottom));
-    }
-}
-
-/* Ночная тема */
-.night-theme .game-background {
-    background-image: url('../assets/images/backgrounds/night.jpg');
-    filter: brightness(0.7);
-}
-
-/* Космическая тема */
-.space-theme .game-background {
-    background-image: url('../assets/images/backgrounds/space.jpg');
-    filter: brightness(0.8);
 }
